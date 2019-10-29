@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
+    <title>OpenLayers example</title>
+
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./maquetteA.css">
+
+    <style>
+        .map {
+            display: inline-block;
+            margin-left: 22%;
+            margin-right: 25%;
+            height: 500px;
+            width: 900px;
+            backface-visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="Menu">
+        <table>
+            <th>
+
+                <div class="dropdown">
+                    <a href="./maquetteAccueil.html"><button class="dropbtn">Accueil</button></a>
+            </th>
+            <th>
+                <div class="dropdown">
+                    <button class="dropbtn">C1</button>
+                    <div class="dropdown-content">
+                        <a href="./contenu.html">Link 1</a>
+                        <a href="./contenu.html">Link 2</a>
+                        <a href="./contenu.html">Link 3</a>
+                    </div>
+                </div>
+            </th>
+
+            <th>
+                <div class="dropdown">
+                    <button class="dropbtn">C2</button>
+                    <div class="dropdown-content">
+                        <a href="./contenu.html">Link 1</a>
+                        <a href="./contenu.html">Link 2</a>
+                        <a href="./contenu.html">Link 3</a>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <div id="connection" class="dropdown">
+                    <button class="dropbtn" onclick="alert('affichage d\'un rectangle avec le formulaire du login')">Se
+                        connecter</button>
+                </div>
+            </th>
+        </table>
+    </div>
+
+    <div id="MainContainer">
+
+        <div id="map" class="map"></div>
+        <script type="text/javascript">
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM()
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([37.41, 8.82]),
+                    zoom: 4
+                })
+            });
+        </script>
+        <div id="desc">
+            <p>[descritioon de l'évent] In ac lorem sed quam porta iaculis nec mollis turpis. Aliquam mattis at neque
+                sed bibendum.
+                In porttitor interdum accumsan. Vestibulum quis dolor nec purus finibus laoreet elementum id mauris.
+                Integer tincidunt elementum lorem, ac dapibus erat luctus eget. Duis congue sem ante, id blandit nisl
+                varius cursus. In hac habitasse platea dictumst.</p>
+        </div>
+        <div>
+            <div id="comzone">
+                <p>
+                    <div>
+                        <!-- <img class="pp" src ="./img/jm.png"/> -->
+                        <h4><strong>Jean-Martin de Garonne :</strong></h4>
+                    </div> 
+                    Cet évènement revient chaque année à Capestang, c'est un incontournable de la pêche a la crevette tigrée ! A voir absolument !!
+                </p>
+            </div>
+            <form action="/" method="post" id="chat_form">
+                <input type="text" name="message" id="message" placeholder="Say something..." size="50" autofocus />
+                <input type="submit" id="send_message" value="Send" />
+            </form>
+        </div>
+
+
+
+    </div>
+
+
+
+</body>
+
+</html>
