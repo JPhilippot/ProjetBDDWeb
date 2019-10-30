@@ -23,11 +23,11 @@ class User{
         try{
             $hash=password_hash($pass,PASSWORD_DEFAULT);
             echo strlen($hash) . "<br>";
-            $stmt=$this->dbh->prepare("INSERT INTO Visiteur(ID_Vis,email,login,password) VALUES(1, :uemail, :ulogin, :upass);");
+            $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
-            $stmt->bindParam(":uemail",$email,PDO::PARAM_STR,12);
-            $stmt->bindParam(":ulogin",$login,PDO::PARAM_STR,12);
-            $stmt->bindParam(":upass",$hash,PDO::PARAM_STR,80);
+            $stmt->bindParam(":uemail",$email);
+            $stmt->bindParam(":ulogin",$login);
+            $stmt->bindParam(":upass",$hash);
             var_dump($stmt);
             echo "<br>";
             $stmt->execute();
