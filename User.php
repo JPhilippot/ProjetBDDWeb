@@ -22,17 +22,14 @@ class User{
     public function register($email, $login, $pass){  //ou sign up, bref pour s'enregister pour la premiere fois
         try{
             $hash=password_hash($pass,PASSWORD_DEFAULT);
-            echo strlen($hash) . "<br>";
             $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
             $stmt->bindParam(":uemail",$email);
             $stmt->bindParam(":ulogin",$login);
             $stmt->bindParam(":upass",$hash);
-            var_dump($stmt);
-            echo "<br>";
             $stmt->execute();
-            var_dump($stmt);
-            echo "<br>";
+            $_SESSION['user_session']=$login;
+            
             return $stmt;
         }
         catch(PDOException $e){
@@ -59,8 +56,7 @@ class User{
             var_dump($row);
             if($stmt->rowCount()){
                 if(password_verify($pass,$row['password'])){
-                    $_SESSION['user_session']=$row['ID_Vis'];
-                    $_SESSION['user_login']=$row['login'];
+                    $_SESSION['user_session']=$login;
 
                     return true;
                 } else {
