@@ -131,6 +131,10 @@ CREATE TABLE S_inscrit(
 	,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN KEY (ID_Vis) REFERENCES Visiteur(ID_Vis)
 )ENGINE=InnoDB;
 
+ALTER TABLE Visiteur AUTO_INCREMENT=1;
+ALTER TABLE Evenement AUTO_INCREMENT=1;
+ALTER TABLE Contributeur AUTO_INCREMENT=1;
+ALTER TABLE Localisation AUTO_INCREMENT=1;
 
 
 #------------------------------------------------------------
@@ -140,14 +144,6 @@ CREATE TABLE S_inscrit(
 
 INSERT INTO Administrateur SELECT 1,'admin@email.com','root',SHA2('root',256);
 
-INSERT INTO Visiteur VALUES(20191,'michel@lepastis.com','Michel','lepastis');
-
-INSERT INTO Contributeur VALUES(20191,'michel@lepastis.com','Michel','lepastis',NULL);
-
 INSERT INTO Localisation VALUES(1,'MONTPELLIER',43.6119, 3.8772);
 
 INSERT INTO Theme VALUES('Concert',1,1);
-
-INSERT INTO Evenement VALUES(1,'2003-12-31',500,'',0,20191,1,'Concert');
-
-INSERT INTO S_inscrit VALUES(1,20191);
