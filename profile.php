@@ -65,12 +65,12 @@ if(!$user->isLoggedin()){
         
         <div class="pacc">
             <p>
-            <h1><b>Bienvenue <?php echo $_SESSION['user_login'];?> !</b></h1>
+            <h1><b>Bienvenue <?php echo $_SESSION['user_session'];?> !</b></h1>
             </p>
         </div>
         
         <div class="pacc">
-        <p>Afficher la liste des evenement auquel <?php echo $_SESSION['user_login']?> est inscrit</p>
+        <p>Afficher la liste des evenement auquel <?php echo $_SESSION['user_session']?> est inscrit</p>
         </div>
    </div>
 </body>
