@@ -160,3 +160,15 @@ h1 >p{
     background-color: rgb(92, 158, 202);;
     color: white;
 }
+
+#listevent{
+  border: 1px solid black;
+  border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+}
+
+#listevent > th,td{
+  border: 1px solid black;
+  padding: 15px;
+}

@@ -1,9 +1,8 @@
 <?php //Page personnel
-include_once 'config.php';                //Pour pouvoir avoir accès a la variable $user
+include_once ('config.php');                //Pour pouvoir avoir accès a la variable $user
 if(!$user->isLoggedin()){
-    $user->redirect('index.php');
+   $user->redirect('index.php');
 }
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -22,57 +21,41 @@ if(!$user->isLoggedin()){
             <th>
 
                 <div class="dropdown">
-                    <a href="./index.php"><button class="dropbtn">Accueil</button></a>
-            </th>
-            <th>
-                <div class="dropdown">
-                    <button class="dropbtn">C1</button>
-                    <div class="dropdown-content">
-                        <a href="./contenu.html">Link 1</a>
-                        <a href="./contenu.html">Link 2</a>
-                        <a href="./contenu.html">Link 3</a>
-                    </div>
+                    <a href="./profile.php"><button class="dropbtn">Mon profile</button></a>
                 </div>
             </th>
 
             <th>
                 <div class="dropdown">
-                    <button class="dropbtn">C2</button>
+                    <button class="dropbtn">Evénements</button>
                     <div class="dropdown-content">
-                        <a href="./contenu.html">Link 1</a>
-                        <a href="./contenu.html">Link 2</a>
-                        <a href="./contenu.html">Link 3</a>
+                        <a href="./carte.php">Carte</a>            <!--carte en dur????-->
+                        <a href="./event.php">Liste</a>
                     </div>
-                </div>
-            </th>
-            <th>
-                <div id="connection" class="dropdown">
-                <button class="dropbtn" onclick =generationForm('log')>Se connecter</button>
-                </div>
-            </th>
-            <th>
-                <div id="enregister" class="dropdown">
-                <button class="dropbtn" onclick =generationForm('reg')>S'enregistrer</button>
                 </div>
             </th>
         </table>
     </div>
     <div id ="up">
-            <a href="#Menu"><img id="arrrow" src="img/up.png"/></a>
-    
+        <a href="#Menu"><img id="arrrow" src="img/up.png"/></a>
+        
     </div>
     <div id="MainContainer">
         
         <div class="pacc">
             <p>
-            <h1><b>Bienvenue <?php echo $_SESSION['user_session'];?> !</b></h1>
+                <h1><b>Bienvenue <?php echo $_SESSION['user_session'];?> !</b></h1>
             </p>
         </div>
         
         <div class="pacc">
-        <p>Afficher la liste des evenement auquel <?php echo $_SESSION['user_session']?> est inscrit</p>
-        </div>
-   </div>
+            <p>Afficher la liste des evenement auquel <?php echo $_SESSION['user_session'];?> est inscrit</p>
+            <p><?php
+            $user->listevent();
+            ?>
+        </p>
+    </div>
+</div>
 </body>
 
 </html>

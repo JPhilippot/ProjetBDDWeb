@@ -41,7 +41,7 @@ function generationForm(val){
             form+="<input name='pass' type='text' placeholder='Mot de passe' required><br>";
             form+="Se souvenir de moi ";
             form+="<input name='remember' type='checkbox'><br>";
-            form+="<input name='"+val+"' type='submit' value='S'enregistrer'>"
+            form+="<input name='"+val+"' type='submit' value="+"S'enregistrer"+">";
             form+="</form>";
 
             $("#registration").empty();

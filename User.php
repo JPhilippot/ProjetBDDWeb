@@ -2,7 +2,6 @@
 
 class User{
     private $dbh;
-    private $login;
 
     function __construct($dbh){
         $this->dbh=$dbh;
@@ -22,6 +21,7 @@ class User{
     public function register($email, $login, $pass){  //ou sign up, bref pour s'enregister pour la premiere fois
         try{
             $hash=password_hash($pass,PASSWORD_DEFAULT);
+            echo strlen($hash) . "<br>";
             $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
             $stmt->bindParam(":uemail",$email);
@@ -29,14 +29,14 @@ class User{
             $stmt->bindParam(":upass",$hash);
             $stmt->execute();
             $_SESSION['user_session']=$login;
-            
+
             return $stmt;
         }
         catch(PDOException $e){
             echo $e->getMessage();
         }
     }
-    
+
     /**
      * Permet a un utilisateur de se connecter a la bd
      *
@@ -53,7 +53,6 @@ class User{
             $stmt=$this->dbh->prepare("SELECT * FROM Visiteur WHERE login=:ulogin OR email=:uemail LIMIT 1");
             $stmt->execute(array(":ulogin"=>$login,":uemail"=>$email));
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
-            var_dump($row);
             if($stmt->rowCount()){
                 if(password_verify($pass,$row['password'])){
                     $_SESSION['user_session']=$login;
@@ -82,6 +81,29 @@ class User{
      */
     public function redirect($url){
         header("Location: $url");
+    }
+
+    /**
+     * @return array contenant la liste des evenements auquel l'utilisateur est
+     * inscrit
+     */
+    public function listevent(){
+        $stmt=$this->dbh->prepare("SELECT Titre, Date , Adresse FROM Evenement, Localisation, S_inscrit WHERE Localisation.ID_Loc=Evenement.ID_Loc AND Evenement.ID_Event=S_inscrit.ID_Event AND S_inscrit.login=:ulogin");   
+        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+        $stmt->execute();
+
+        $tab=$stmt->fetch(PDO::FETCH_ASSOC);
+        if($stmt->rowCount()){
+            echo "<ul>";
+            for ($i=0; $i<$stmt->rowCount();$i++){
+                echo "<br><li><a href='./profile.php'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
+                $tab=$stmt->fetch(PDO::FETCH_ASSOC);
+            }
+            echo "</ul><br>";
+        } else {
+            echo "Vous êtes inscrit a aucun événement.<br>";
+        }
+
     }
 
     /**
