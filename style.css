@@ -7,7 +7,7 @@
 }
 
 body{
-    /* background-image: url("./img/mapbckgrnd.jpg"); */
+    background-image: url("./img/mapbckgrnd.jpg");
     background-color: rgba(56, 121, 207, 0.582);
     background-attachment: fixed;
 }

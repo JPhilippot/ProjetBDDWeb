@@ -1,5 +1,36 @@
 <?php
 include_once('config.php');
+
+if(isset($_POST['log'])){
+    $login= $_POST['login'];
+    $email= $_POST['email'];
+    $pass= $_POST['pass'];
+
+
+    if($user->login($email,$login,$pass)){
+        if(isset($_POST['remember'])){
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
+        }
+        $user->redirect('profile.php');
+    }
+    else{
+        echo "Invalid credentials<br>";
+    }
+} else if(isset($_POST['reg'])){
+    $login= $_POST['login'];
+    $email= $_POST['email'];
+    $pass= $_POST['pass'];
+
+
+    if($user->register($email,$login,$pass)){
+        $user->redirect('profile.php');
+    }
+    else{
+        echo "ERROR<br>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +62,7 @@ include_once('config.php');
                 <div class="dropdown">
                     <button class="dropbtn">Evénements</button>
                     <div class="dropdown-content">
-                        <a href="./event.html">Carte</a>            <!--carte en dur????-->
+                        <a href="./carte.php">Carte</a>
                         <a href="./event.php">Liste</a>
                     </div>
                 </div>
@@ -53,10 +84,10 @@ include_once('config.php');
         </table>
     </div>
     <div id ="up">
-            <a href="#Menu"><img id="arrrow" src="img/up.png"/></a>
+            <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
     </div>
     <div id="MainContainer">
-        <!--Display tout les event jusqu'a 50, faire plusieures pages-->   
+        <!--TODO: pagination, afficher 30/20/10 evenements par pages-->
         <div class="pacc">
         <p>
         <table id="listevent">

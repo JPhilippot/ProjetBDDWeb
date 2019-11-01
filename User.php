@@ -19,23 +19,23 @@ class User{
      * @return PDOStatment 
      */
     public function register($email, $login, $pass){  //ou sign up, bref pour s'enregister pour la premiere fois
-        try{
-            $hash=password_hash($pass,PASSWORD_DEFAULT);
-            echo strlen($hash) . "<br>";
-            $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
+    try{
+        $hash=password_hash($pass,PASSWORD_DEFAULT);
+        echo strlen($hash) . "<br>";
+        $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
-            $stmt->bindParam(":uemail",$email);
-            $stmt->bindParam(":ulogin",$login);
-            $stmt->bindParam(":upass",$hash);
-            $stmt->execute();
-            $_SESSION['user_session']=$login;
+        $stmt->bindParam(":uemail",$email);
+        $stmt->bindParam(":ulogin",$login);
+        $stmt->bindParam(":upass",$hash);
+        $stmt->execute();
+        $_SESSION['user_session']=$login;
 
-            return $stmt;
-        }
-        catch(PDOException $e){
-            echo $e->getMessage();
-        }
+        return $stmt;
     }
+    catch(PDOException $e){
+        echo $e->getMessage();
+    }
+}
 
     /**
      * Permet a un utilisateur de se connecter a la bd
@@ -84,31 +84,36 @@ class User{
     }
 
     /**
-     * @return array contenant la liste des evenements auquel l'utilisateur est
-     * inscrit
+     * affiche la liste des evenements auquels l'utilisateur est inscrit
+     * @throws PDOException
      */
     public function listevent(){
-        $stmt=$this->dbh->prepare("SELECT Titre, Date , Adresse FROM Evenement, Localisation, S_inscrit WHERE Localisation.ID_Loc=Evenement.ID_Loc AND Evenement.ID_Event=S_inscrit.ID_Event AND S_inscrit.login=:ulogin");   
-        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
-        $stmt->execute();
+        try{
+            $stmt=$this->dbh->prepare("SELECT Evenement.ID_Event, Titre, Date , Adresse FROM Evenement, Localisation, S_inscrit WHERE Localisation.ID_Loc=Evenement.ID_Loc AND Evenement.ID_Event=S_inscrit.ID_Event AND S_inscrit.login=:ulogin");   
+            $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+            $stmt->execute();
 
-        $tab=$stmt->fetch(PDO::FETCH_ASSOC);
-        if($stmt->rowCount()){
-            echo "<ul>";
-            for ($i=0; $i<$stmt->rowCount();$i++){
-                echo "<br><li><a href='./profile.php'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
-                $tab=$stmt->fetch(PDO::FETCH_ASSOC);
+            $tab=$stmt->fetch(PDO::FETCH_ASSOC);
+            if($stmt->rowCount()){
+                echo "<ul>";
+                for ($i=0; $i<$stmt->rowCount();$i++){
+                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
+                    $tab=$stmt->fetch(PDO::FETCH_ASSOC);
+                }
+                echo "</ul><br>";
+            } else {
+                echo "Vous êtes inscrit a aucun événement.<br>";
             }
-            echo "</ul><br>";
-        } else {
-            echo "Vous êtes inscrit a aucun événement.<br>";
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
         }
 
     }
 
     /**
      * Détruit la session de l'utilisateur
-     * @return true si tout se passe bien, false sinon
+     * @return true si tout se passe bien
      */
     public function logout(){
         session_destroy();

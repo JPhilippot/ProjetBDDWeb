@@ -22,10 +22,56 @@ if(!isset($_GET['lastevent'])){
         die();
     }
 }
-if(isset($_GET['inscription'])){
+
+if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connecte sur cette page
+    $login= $_POST['login'];
+    $email= $_POST['email'];
+    $pass= $_POST['pass'];
+
+
+    if($user->login($email,$login,$pass)){
+        if(isset($_POST['remember'])){
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
+        }
+        $user->redirect('profile.php');
+    }
+    else{
+        echo "Invalid credentials<br>";
+    }
+} else if(isset($_POST['reg'])){
+    $login= $_POST['login'];
+    $email= $_POST['email'];
+    $pass= $_POST['pass'];
+
+
+    if($user->register($email,$login,$pass)){
+        $user->redirect('profile.php');
+    }
+    else{
+        echo "ERROR<br>";
+    }
+}
+
+if(isset($_GET['inscription']) && $user->isLoggedin()){
     //push dans la table
     try{
         $stmt=$dbh->prepare("INSERT INTO S_inscrit VALUES(:levent, :ulogin)");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+        $stmt->execute();
+    }
+    catch(PDOException $e){
+        echo $e->getMessage();
+        die();
+    }
+}
+
+if(isset($_GET['desinscription']) && $user->isLoggedin()){
+    //delete dans la table
+    try{
+        $stmt=$dbh->prepare("DELETE FROM S_inscrit WHERE ID_Event=:levent AND  login=:ulogin");
         $stmt->bindParam(":levent",$_GET['lastevent']);
         $stmt->bindParam(":ulogin",$_SESSION['user_session']);
         $stmt->execute();
@@ -81,7 +127,7 @@ if(isset($_GET['inscription'])){
         <div class="dropdown">
             <button class="dropbtn">Evénements</button>
             <div class="dropdown-content">
-                <a href="./event.html">Carte</a>            <!--carte en dur????-->
+                <a href="./carte.php">Carte</a>
                 <a href="./event.php">Liste</a>
             </div>
         </div>
@@ -90,18 +136,22 @@ if(isset($_GET['inscription'])){
     if(!$user->isLoggedin()){
         echo '<th>
         <div id="connection" class="dropdown">
-        <button class="dropbtn" onclick =generationForm("log")>Se connecter</button>
+        <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
         </div>
         </th>
         <th>
         <div id="enregister" class="dropdown">
-        <button class="dropbtn" onclick =generationForm("reg")>' . "S'enregistrer</button>
+        <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
         </div>
         </th>";
     }
     ?>
 </table>
 </div>
+<div id ="up">
+            <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
+    </div>
+
 <div id="MainContainer">
     <div class="pacc">
         <p>
@@ -131,7 +181,25 @@ if(isset($_GET['inscription'])){
     <div>
         <?php
         if($user->isLoggedin()){
-            echo "<button><a href='contenu.php?inscription=true'>S'inscrire</a></button>"; 
+            //afficher le bouton que si l'utilisateur n'est pas incrit -> requete
+            try{
+                $stmt=$dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
+                $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+                $stmt->bindParam(":levent",$_GET['lastevent']);
+                $stmt->execute();
+                $row=$stmt->fetch(PDO::FETCH_ASSOC);
+
+                if(!$stmt->rowCount()){
+                    echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&inscription=true'>S'inscrire</a></button>";        
+                } else {
+                    echo "<b>Vous êtes inscrit à cet évènement.</b><br>";
+                    echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&desinscription=true'>Se désinscrire</a></button>";
+                }
+            }
+            catch(PDOException $e){
+                echo $e->getMessage();
+            }
+             
         } else {
             echo '<button onclick='.'"'."alert('Vous devez être connecté(e) pour pouvoir vous inscrire')" . '"' . ">S'inscrire</button>";
         }
@@ -142,7 +210,7 @@ if(isset($_GET['inscription'])){
             <p>
                 <div>
                     <!-- <img class="pp" src ="./img/jm.png"/> -->
-                    <h4><strong>Jean-Martin de Garonne :</strong></h4>
+                    <h4><b>Jean-Martin de Garonne :</b></h4>
                 </div> 
                 Cet évènement revient chaque année à Capestang, c'est un incontournable de la pêche a la crevette tigrée ! A voir absolument !!
             </p>

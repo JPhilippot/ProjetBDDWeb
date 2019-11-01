@@ -29,7 +29,7 @@ if(!$user->isLoggedin()){
                 <div class="dropdown">
                     <button class="dropbtn">Evénements</button>
                     <div class="dropdown-content">
-                        <a href="./carte.php">Carte</a>            <!--carte en dur????-->
+                        <a href="./carte.php">Carte</a>
                         <a href="./event.php">Liste</a>
                     </div>
                 </div>
@@ -37,11 +37,12 @@ if(!$user->isLoggedin()){
         </table>
     </div>
     <div id ="up">
-        <a href="#Menu"><img id="arrrow" src="img/up.png"/></a>
+        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
         
     </div>
     <div id="MainContainer">
-        
+        <!--TODO: Faire un bouton devenir contributeur si l'utilisateur n'est pas contributeur-->
+
         <div class="pacc">
             <p>
                 <h1><b>Bienvenue <?php echo $_SESSION['user_session'];?> !</b></h1>
@@ -49,11 +50,12 @@ if(!$user->isLoggedin()){
         </div>
         
         <div class="pacc">
-            <p>Afficher la liste des evenement auquel <?php echo $_SESSION['user_session'];?> est inscrit</p>
-            <p><?php
-            $user->listevent();
-            ?>
-        </p>
+            <p>
+                Voici les évenements auquels vous êtes inscrit:
+            </p>
+            <p>
+                <?php $user->listevent();?>
+            </p>
     </div>
 </div>
 </body>

@@ -10,7 +10,9 @@ if($user->isLoggedin()){
 
     if($user->login($email,$login,$pass)){
         if(isset($_POST['remember'])){
-                //setcookie
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
         }
         $user->redirect('profile.php');
     }
@@ -38,8 +40,8 @@ if($user->isLoggedin()){
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="./style.css">
-    <script src="jquery-3.4.1.min.js"></script>
-    <script src="form.js"></script>
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="form.js"></script>
 </head>
 
 <body>
@@ -55,7 +57,7 @@ if($user->isLoggedin()){
                     <div class="dropdown">
                         <button class="dropbtn">Evénements</button>
                         <div class="dropdown-content">
-                            <a href="./event.html">Carte</a>            <!--carte en dur????-->
+                            <a href="./carte.php">Carte</a>
                             <a href="./event.php">Liste</a>
                         </div>
                     </div>
@@ -73,7 +75,7 @@ if($user->isLoggedin()){
             </table>
         </div>
         <div id ="up">
-            <a href="#Menu"><img id="arrrow" src="img/up.png"/></a>
+            <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
             
         </div>
         <div id="MainContainer">
