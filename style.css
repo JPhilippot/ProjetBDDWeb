@@ -172,3 +172,25 @@ h1 >p{
   border: 1px solid black;
   padding: 15px;
 }
+
+
+/* Pagination */
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;<
+  border: 1px solid black;
+}
+
+.pagination a.active {
+  background-color: rgb(92, 158, 202);
+  color: white;
+  border: 1px solid rgb(92, 158, 202);
+}

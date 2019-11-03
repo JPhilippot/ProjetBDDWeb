@@ -1,7 +1,12 @@
 <?php //Page personnel
-include_once ('config.php');                //Pour pouvoir avoir accès a la variable $user
+include_once ('config.php');
 if(!$user->isLoggedin()){
    $user->redirect('index.php');
+}
+
+if(isset($_GET['deco'])){
+    $user->logout();
+    $user->redirect('index.php');
 }
 ?>
 <!DOCTYPE html>
@@ -9,9 +14,10 @@ if(!$user->isLoggedin()){
 
 <head>
     <meta charset="utf-8">
+    <title>Seek My Spot</title>
     <link rel="stylesheet" type="text/css" href="./style.css">
-    <script src="jquery-3.4.1.min.js"></script>
-    <script src="form.js"></script>
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="form.js"></script>
 </head>
 
 <body>
@@ -24,7 +30,12 @@ if(!$user->isLoggedin()){
                     <a href="./profile.php"><button class="dropbtn">Mon profile</button></a>
                 </div>
             </th>
+            <th>
 
+                <div class="dropdown">
+                    <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+                </div>
+            </th>
             <th>
                 <div class="dropdown">
                     <button class="dropbtn">Evénements</button>
@@ -42,6 +53,9 @@ if(!$user->isLoggedin()){
     </div>
     <div id="MainContainer">
         <!--TODO: Faire un bouton devenir contributeur si l'utilisateur n'est pas contributeur-->
+        <?php
+            //requete sur contributeur, si l'utilisateur n'est pas dedans afficher un bouton pour deveniur contributeur + le faire valider par un administrateur -> gerer les comptes admin en premier.
+        ?>
 
         <div class="pacc">
             <p>

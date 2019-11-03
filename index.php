@@ -39,6 +39,7 @@ if($user->isLoggedin()){
 
 <head>
     <meta charset="utf-8">
+    <title>Seek My Spot</title>
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
@@ -82,7 +83,7 @@ if($user->isLoggedin()){
             
             <div class="pacc">
                 <p>
-                    <h1><b>Bienvenue sur [NOM DU SITE] !</b>
+                    <h1><b>Bienvenue sur Seek My Spot !</b>
                     </h1>
                     <b>[Description du site]</b>
                     {

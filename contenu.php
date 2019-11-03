@@ -24,22 +24,22 @@ if(!isset($_GET['lastevent'])){
 }
 
 if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connecte sur cette page
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+$login= $_POST['login'];
+$email= $_POST['email'];
+$pass= $_POST['pass'];
 
 
-    if($user->login($email,$login,$pass)){
-        if(isset($_POST['remember'])){
-            $cookie_name="user";
-            $cookie_value=$_SESSION['user_session'];
-            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
-        }
-        $user->redirect('profile.php');
+if($user->login($email,$login,$pass)){
+    if(isset($_POST['remember'])){
+        $cookie_name="user";
+        $cookie_value=$_SESSION['user_session'];
+        setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
     }
-    else{
-        echo "Invalid credentials<br>";
-    }
+    $user->redirect('profile.php');
+}
+else{
+    echo "Invalid credentials<br>";
+}
 } else if(isset($_POST['reg'])){
     $login= $_POST['login'];
     $email= $_POST['email'];
@@ -55,12 +55,18 @@ if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connec
 }
 
 if(isset($_GET['inscription']) && $user->isLoggedin()){
-    //push dans la table
     try{
+        //Insertion de l'utilisateur dans la table S_inscrit
         $stmt=$dbh->prepare("INSERT INTO S_inscrit VALUES(:levent, :ulogin)");
         $stmt->bindParam(":levent",$_GET['lastevent']);
         $stmt->bindParam(":ulogin",$_SESSION['user_session']);
         $stmt->execute();
+
+        //Mise à jour de EffectifActuel dans l'Evenement
+        $stmt=$dbh->prepare("UPDATE Evenement SET EffectifActuel=EffectifActuel+1 WHERE ID_Event=:levent");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->execute();
+        $row['EffectifActuel']++;
     }
     catch(PDOException $e){
         echo $e->getMessage();
@@ -71,10 +77,17 @@ if(isset($_GET['inscription']) && $user->isLoggedin()){
 if(isset($_GET['desinscription']) && $user->isLoggedin()){
     //delete dans la table
     try{
+        //Suppression de l'utilisateur de la table S_inscrit 
         $stmt=$dbh->prepare("DELETE FROM S_inscrit WHERE ID_Event=:levent AND  login=:ulogin");
         $stmt->bindParam(":levent",$_GET['lastevent']);
         $stmt->bindParam(":ulogin",$_SESSION['user_session']);
         $stmt->execute();
+
+        //Mise à jour de EffectifActuel dans l'Evenement
+        $stmt=$dbh->prepare("UPDATE Evenement SET EffectifActuel=EffectifActuel-1 WHERE ID_Event=:levent");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->execute();
+        $row['EffectifActuel']--;
     }
     catch(PDOException $e){
         echo $e->getMessage();
@@ -86,14 +99,15 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
 <html>
 
 <head>
-    <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
-</style>
-<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
-<title>Nom du site</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="form.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
 
-<meta charset="utf-8">
-<link rel="stylesheet" type="text/css" href="./style.css">
+    <title>Seek My Spot</title>
+
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./style.css">
 
 <style>
     .map {
@@ -123,7 +137,16 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
          }
          ?>
      </th>
-     <th>
+     <?php
+     if($user->isLoggedin()){
+        echo '<th>
+        <div class="dropdown">
+        <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+        </div>
+        </th>';
+    }
+    ?>
+    <th>
         <div class="dropdown">
             <button class="dropbtn">Evénements</button>
             <div class="dropdown-content">
@@ -133,24 +156,24 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
         </div>
     </th>
     <?php
-    if(!$user->isLoggedin()){
-        echo '<th>
-        <div id="connection" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
-        </div>
-        </th>
-        <th>
-        <div id="enregister" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
-        </div>
-        </th>";
-    }
-    ?>
+        if(!$user->isLoggedin()){
+            echo '<th>
+            <div id="connection" class="dropdown">
+            <button class="dropbtn" onclick =generationForm("log")>Se connecter</button>
+            </div>
+            </th>
+            <th>
+            <div id="enregister" class="dropdown">
+            <button class="dropbtn" onclick =generationForm("reg")>' . "S'enregistrer</button>
+            </div>
+            </th>";
+        }
+        ?>
 </table>
 </div>
 <div id ="up">
-            <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
-    </div>
+    <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
+</div>
 
 <div id="MainContainer">
     <div class="pacc">
@@ -180,8 +203,8 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
     </div>
     <div>
         <?php
+        echo "Effectif: {$row['EffectifActuel']}/{$row['EffectifMax']}<br>";
         if($user->isLoggedin()){
-            //afficher le bouton que si l'utilisateur n'est pas incrit -> requete
             try{
                 $stmt=$dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
                 $stmt->bindParam(":ulogin",$_SESSION['user_session']);
@@ -198,8 +221,9 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
             }
             catch(PDOException $e){
                 echo $e->getMessage();
+                die();
             }
-             
+            
         } else {
             echo '<button onclick='.'"'."alert('Vous devez être connecté(e) pour pouvoir vous inscrire')" . '"' . ">S'inscrire</button>";
         }
