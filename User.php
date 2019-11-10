@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * User est une classe qui permet de gerer les utilisateurs.
+ *
+ * @author Aurelien Besnier <https://github.com/AurelienBesnier>
+ * @version 1.00
+ * @see  https://github.com/JPhilippot/ProjetBDDWeb
+ */
 class User{
     private $dbh;
 
@@ -16,7 +22,8 @@ class User{
      *
      * @throws PDOException
      *
-     * @return PDOStatment 
+     * @return PDOStatment
+     * @access public
      */
     public function register($email, $login, $pass):PDOStatment{
     try{
@@ -46,7 +53,8 @@ class User{
      *
      * @throws PDOException
      *
-     * @return true si l'utilisateur existe dans la bd, false sinon 
+     * @return true si l'utilisateur existe dans la bd, false sinon
+     * @access public
      */
     public function login($login,$pass): bool{
         try{
@@ -75,6 +83,7 @@ class User{
      * @throws PDOException
      *
      * @return bool true si l'utilisateur est contributeur false sinon
+     * @access public
      */
     public function isContributor():bool{
         try{
@@ -93,11 +102,35 @@ class User{
     }
 
     /**
-     * Enregistre l'utilisateur dans la table des contributeurs
+     * Determine si l'utilisateur est un administrateur
      *
      * @throws PDOException
      *
+     * @return bool true si l'utilisateur est administrateur false sinon
+     */
+    public function isAdministrateur():bool{
+        try{
+            $stmt=$this->dbh->prepare("SELECT * FROM Administrateur WHERE login=:ulogin LIMIT 1");
+            $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+            $stmt->execute();
+            if($stmt->rowCount()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
+        }
+    }
+
+
+    /**
+     * Enregistre l'utilisateur dans la table des contributeurs
+     *
+     * @throws PDOException
      * @return true si tout c'est bien passé
+     * @access public
      */
     public function setContributeur():bool{
         try{
@@ -120,6 +153,7 @@ class User{
      * Determine si l'utilisateur est logge(e)
      *
      * @return bool true si l'utilisateur est connecté false sinon
+     * @access public
      */
     public function isLoggedin(): bool{
         return isset($_SESSION['user_session']);
@@ -129,6 +163,7 @@ class User{
      * Redirige l'utilisateur sur la page $url
      *
      * @param string representant l'url d'un page du site
+     * @access public
      */
     public function redirect($url){
         header("Location: $url");
@@ -138,6 +173,7 @@ class User{
      * affiche la liste des evenements auquels l'utilisateur est inscrit
      *
      * @throws PDOException
+     * @access public
      */
     public function listevent(){
         try{
@@ -160,12 +196,13 @@ class User{
         catch(PDOException $e){
             echo $e->getMessage();
         }
-
     }
 
     /**
      * Détruit la session de l'utilisateur
+     *
      * @return true si tout se passe bien
+     * @access public
      */
     public function logout(): bool{
         session_destroy();

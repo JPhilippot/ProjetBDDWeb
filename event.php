@@ -101,7 +101,7 @@ if(isset($_POST['log'])){
         <p>
             <table id="listevent">
                 <tr>
-                    <th>Titre</th><th>Date</th><th>Thème</th>
+                    <th>Titre</th><th>Date</th><th>Thème</th><th>Effectif Actuel</th>
                 </tr>
                 <?php
                 
@@ -131,7 +131,8 @@ if(isset($_POST['log'])){
 
                     foreach ($stmt as $row) {
                         echo "<tr>";
-                        echo "<td><a href='contenu.php?lastevent=" . $row['ID_Event'] . "'>" . $row['Titre'] . "</a></td><td>" . $row['Date'] . "</td><td>" . $row['Nom'] . "</td>";
+                        echo "<td><a href='contenu.php?lastevent={$row['ID_Event']}'>{$row['Titre']}</a></td><td>{$row['Date']}</td>";
+                        echo "<td>{$row['Nom']}</td><td>{$row['EffectifActuel']}/{$row['EffectifMax']}</td>";
                         echo "</tr>";
                     }
                 }
