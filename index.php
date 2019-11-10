@@ -8,7 +8,7 @@ if($user->isLoggedin()){
     $pass= $_POST['pass'];
 
 
-    if($user->login($email,$login,$pass)){
+    if($user->login($login,$pass)){
         if(isset($_POST['remember'])){
             $cookie_name="user";
             $cookie_value=$_SESSION['user_session'];

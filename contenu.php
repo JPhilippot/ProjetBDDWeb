@@ -24,22 +24,22 @@ if(!isset($_GET['lastevent'])){
 }
 
 if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connecte sur cette page
-$login= $_POST['login'];
-$email= $_POST['email'];
-$pass= $_POST['pass'];
+    $login= $_POST['login'];
+    $email= $_POST['email'];
+    $pass= $_POST['pass'];
 
 
-if($user->login($email,$login,$pass)){
-    if(isset($_POST['remember'])){
-        $cookie_name="user";
-        $cookie_value=$_SESSION['user_session'];
-        setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
+    if($user->login($email,$login,$pass)){
+        if(isset($_POST['remember'])){
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
+        }
+        $user->redirect('profile.php');
     }
-    $user->redirect('profile.php');
-}
-else{
-    echo "Invalid credentials<br>";
-}
+    else{
+        echo "Invalid credentials<br>";
+    }
 } else if(isset($_POST['reg'])){
     $login= $_POST['login'];
     $email= $_POST['email'];

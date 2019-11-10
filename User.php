@@ -18,7 +18,7 @@ class User{
      *
      * @return PDOStatment 
      */
-    public function register($email, $login, $pass){  //ou sign up, bref pour s'enregister pour la premiere fois
+    public function register($email, $login, $pass):PDOStatment{
     try{
         $hash=password_hash($pass,PASSWORD_DEFAULT);
         echo strlen($hash) . "<br>";
@@ -48,10 +48,10 @@ class User{
      *
      * @return true si l'utilisateur existe dans la bd, false sinon 
      */
-    public function login($email,$login,$pass){
+    public function login($login,$pass): bool{
         try{
-            $stmt=$this->dbh->prepare("SELECT * FROM Visiteur WHERE login=:ulogin OR email=:uemail LIMIT 1");
-            $stmt->execute(array(":ulogin"=>$login,":uemail"=>$email));
+            $stmt=$this->dbh->prepare("SELECT * FROM Visiteur WHERE login=:ulogin OR email=:ulogin LIMIT 1");
+            $stmt->execute(array(":ulogin"=>$login));
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt->rowCount()){
                 if(password_verify($pass,$row['password'])){
@@ -65,19 +65,70 @@ class User{
         }
         catch(PDOException $e){
             echo $e->getMessage();
+            return false;
         }
     }
 
     /**
-     * @return booleen true si l'utilisateur est connecté false sinon
+     * Determine si l'utilisateur est un contributeur
+     *
+     * @throws PDOException
+     *
+     * @return bool true si l'utilisateur est contributeur false sinon
      */
-    public function isLoggedin(){
+    public function isContributor():bool{
+        try{
+            $stmt=$this->dbh->prepare("SELECT * FROM Contributeur WHERE login=:ulogin LIMIT 1");
+            $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+            $stmt->execute();
+            if($stmt->rowCount()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
+        }
+    }
+
+    /**
+     * Enregistre l'utilisateur dans la table des contributeurs
+     *
+     * @throws PDOException
+     *
+     * @return true si tout c'est bien passé
+     */
+    public function setContributeur():bool{
+        try{
+
+            $stmt=$this->dbh->prepare("SELECT * FROM Visiteur WHERE login=:ulogin LIMIT 1");
+            $stmt->bindParam(":ulogin", $_SESSION['user_session']);
+            $stmt->execute();
+            $row=$stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt=$this->dbh->prepare("INSERT INTO Contributeur(login,email,password) VALUES(:ulogin,:uemail,:upass)");
+            $stmt->execute(array(":ulogin"=>$_SESSION['user_session'],":uemail"=>$row['email'],":upass"=>$row['password']));
+            return true;
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
+        }
+    }
+
+    /**
+     * Determine si l'utilisateur est logge(e)
+     *
+     * @return bool true si l'utilisateur est connecté false sinon
+     */
+    public function isLoggedin(): bool{
         return isset($_SESSION['user_session']);
     }
 
     /**
-     * @param string representant l'url d'un page du site
      * Redirige l'utilisateur sur la page $url
+     *
+     * @param string representant l'url d'un page du site
      */
     public function redirect($url){
         header("Location: $url");
@@ -85,6 +136,7 @@ class User{
 
     /**
      * affiche la liste des evenements auquels l'utilisateur est inscrit
+     *
      * @throws PDOException
      */
     public function listevent(){
@@ -115,7 +167,7 @@ class User{
      * Détruit la session de l'utilisateur
      * @return true si tout se passe bien
      */
-    public function logout(){
+    public function logout(): bool{
         session_destroy();
         unset($_SESSION['user_session']);
         return true;

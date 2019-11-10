@@ -97,8 +97,6 @@ if(isset($_POST['log'])){
     <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
 </div>
 <div id="MainContainer">
-    <!--TODO: pagination, afficher 30/20/10 evenements par pages-->
-
     <div class="pacc">
         <p>
             <table id="listevent">
