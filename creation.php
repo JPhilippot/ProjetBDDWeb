@@ -3,6 +3,15 @@ include_once('config.php');
 if(!$user->isLoggedin() || !$user->isContributor()){
     $user->redirect("index.php");
 }
+
+if(isset($_GET['deco'])){
+    $user->logout();
+    $user->redirect('index.php');
+}
+
+if(isset($_POST['create'])){
+    $user->createEvent($_POST['title'],$_POST['theme'],$_POST['date'],$_POST['adress'],$_POST['eff'],$_POST['desc']);
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -67,7 +76,7 @@ if(!$user->isLoggedin() || !$user->isContributor()){
             <label for="effect">Effectif maximum:</label><br />
             <input type="number" name="effect" value=0 /><br />
             <label for="desc">Description: </label><br />
-            <textarea name="desc" id="desc" rows="5" cols="80" maxlength=300 placeholder="Description(300 caractères max)"></textarea><br />
+            <textarea name="desc" id="desc" rows="5" cols="50" maxlength=300 placeholder="Description(300 caractères max)"></textarea><br />
 
             <input type="submit" value="Créer" name="create"/>
         </form>

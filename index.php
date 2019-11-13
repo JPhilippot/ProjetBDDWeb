@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+include_once('config.php');
 if($user->isLoggedin()){
     $user->redirect('profile.php');
 }else if(isset($_POST['log'])){

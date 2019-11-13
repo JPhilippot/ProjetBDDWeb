@@ -1,0 +1,24 @@
+#+TITLE: ProjetBDDWeb
+#+AUTHOR: Aurélien Besnier
+
+* Login / Register
+** TODO Refaire le chiffrement des mots de passe (pour les admin le faire par phpmyadmin)
+
+* event.php
+** DONE ajouter des attribute dans la table
+
+** TODO mouseover qui affiche la position / une colonne
+** TODO faire un ordre (ORDER BY) les colonnes affichées
+* carte.php
+** TODO tout
+
+* creation.php
+** DONE les options du select
+** TODO la gestion des dates et adresses(JS)
+* admin.php
+** TODO pouvoir promouvoir un visiteur en contributeur
+* contenu.php
+** TODO Systeme de notation
+** TODO Systeme de commentaire
+* profile.php
+** TODO faire en sorte que ceux qui postulent pour devenir contributeur soit en attente(dans une nouvelle table)

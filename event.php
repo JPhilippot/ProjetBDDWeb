@@ -31,6 +31,10 @@ if(isset($_POST['log'])){
         echo "ERROR<br>";
     }
 }
+if(isset($_GET['deco'])){
+    $user->logout();
+    $user->redirect('index.php');
+}
 ?>
 
 <!DOCTYPE html>

@@ -1,6 +1,6 @@
 <?php
 /**
- * User est une classe qui permet de gerer les utilisateurs.
+ * User est une classe qui permet de gérer les utilisateurs.
  *
  * @author Aurelien Besnier <https://github.com/AurelienBesnier>
  * @version 1.00
@@ -26,23 +26,23 @@ class User{
      * @access public
      */
     public function register($email, $login, $pass):PDOStatment{
-    try{
-        $hash=password_hash($pass,PASSWORD_DEFAULT);
-        echo strlen($hash) . "<br>";
-        $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
+        try{
+            $hash=password_hash($pass,PASSWORD_DEFAULT);
+            echo strlen($hash) . "<br>";
+            $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
-        $stmt->bindParam(":uemail",$email);
-        $stmt->bindParam(":ulogin",$login);
-        $stmt->bindParam(":upass",$hash);
-        $stmt->execute();
-        $_SESSION['user_session']=$login;
+            $stmt->bindParam(":uemail",$email);
+            $stmt->bindParam(":ulogin",$login);
+            $stmt->bindParam(":upass",$hash);
+            $stmt->execute();
+            $_SESSION['user_session']=$login;
 
-        return $stmt;
+            return $stmt;
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
+        }
     }
-    catch(PDOException $e){
-        echo $e->getMessage();
-    }
-}
 
     /**
      * Permet a un utilisateur de se connecter a la bd
@@ -73,15 +73,14 @@ class User{
         }
         catch(PDOException $e){
             echo $e->getMessage();
-            return false;
         }
+        return false;
     }
 
     /**
      * Determine si l'utilisateur est un contributeur
      *
      * @throws PDOException
-     *
      * @return bool true si l'utilisateur est contributeur false sinon
      * @access public
      */
@@ -105,7 +104,6 @@ class User{
      * Determine si l'utilisateur est un administrateur
      *
      * @throws PDOException
-     *
      * @return bool true si l'utilisateur est administrateur false sinon
      */
     public function isAdministrateur():bool{
@@ -199,14 +197,56 @@ class User{
     }
 
     /**
+     * Crée un evenement avec les informations fourni dans creation.php
+     *
+     * @param $title string le titre de l'événement
+     * @param $theme string le theme de l'événement
+     * @param $date date la date de l'événement
+     * @param $adress string l'adresse de l'événement
+     * @param $eff int l'effectif maximum
+     * @param $desc string une description de l'événement
+     *
+     * @throws PDOException
+     * @return bool true si tout se passe bien
+     * @access public
+     */
+    public function createEvent($title, $theme, $date, $adress, $eff, $desc): bool{
+        try{
+            $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:adress");
+            $stmt->bindParam(":adress",$adress);
+            $stmt->execute();
+            $row=$stmt->fetch(PDO::FETCH_ASSOC);
+            if(!$stmt->rowCount()){
+                //Create Local ?
+                //$stmt=$this->dbh->prepare("INSERT INTO ")
+            }
+
+            $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,login,ID_Loc,Nom) VALUES(:title,:date,:eff,:desc,:login,:loc,:nom)");
+            $stmt->bindParam(":title",$title);
+            $stmt->bindParam(":date",$date);
+            $stmt->bindParam(":eff",$eff);
+            $stmt->bindParam(":desc",$desc);
+            $stmt->bindParam(":login",$_SESSION['user_session']);
+            $stmt->bindParam(":loc",$row[0]);
+            $stmt->bindParam(":nom",$theme);
+            $stmt->execute();
+            return true;
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
+        }
+    }
+
+    /**
      * Détruit la session de l'utilisateur
      *
      * @return true si tout se passe bien
      * @access public
      */
     public function logout(): bool{
-        session_destroy();
+        session_destroy();            //->pas utiliser sur la fac
         unset($_SESSION['user_session']);
+        $_SESSION=[];
         return true;
     }
 }

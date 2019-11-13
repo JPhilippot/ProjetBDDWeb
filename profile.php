@@ -1,5 +1,5 @@
 <?php //Page personnel
-include_once ('config.php');
+include_once('config.php');
 if(!$user->isLoggedin()){
     $user->redirect('index.php');
 }
@@ -7,6 +7,7 @@ if(!$user->isLoggedin()){
 if(isset($_GET['deco'])){
     $user->logout();
     $user->redirect('index.php');
+
 }
 
 if(isset($_GET['contrib'])){

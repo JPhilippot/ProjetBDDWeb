@@ -1,6 +1,11 @@
 <?php
 include_once('config.php');
 
+if(isset($_GET['deco'])){
+    $user->logout();
+    $user->redirect('index.php');
+}
+
 if(!isset($_GET['lastevent'])){
     $user->redirect('event.php');
 } else {
