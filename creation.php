@@ -10,7 +10,7 @@ if(isset($_GET['deco'])){
 }
 
 if(isset($_POST['create'])){
-    $user->createEvent($_POST['title'],$_POST['theme'],$_POST['date'],$_POST['adress'],$_POST['eff'],$_POST['desc']);
+    $user->createEvent($_POST['title'],$_POST['theme'],$_POST['date'],$_POST['adress'],$_POST['effect'],$_POST['desc']);
 }
 ?>
 <!DOCTYPE html>

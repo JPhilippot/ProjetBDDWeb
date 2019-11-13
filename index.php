@@ -3,9 +3,8 @@ include_once('config.php');
 if($user->isLoggedin()){
     $user->redirect('profile.php');
 }else if(isset($_POST['log'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->login($login,$pass)){
@@ -17,12 +16,12 @@ if($user->isLoggedin()){
         $user->redirect('profile.php');
     }
     else{
-        echo "Invalid credentials<br>";
+        $error="Information incorrectes";
     }
 } else if(isset($_POST['reg'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->register($email,$login,$pass)){
@@ -43,6 +42,7 @@ if($user->isLoggedin()){
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
+    <?php if(isset($error)){echo "<script>alert('Erreur: " . $error . "')</script>";} //faire pop up plus propre ?>
 </head>
 
 <body>

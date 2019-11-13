@@ -29,9 +29,8 @@ if(!isset($_GET['lastevent'])){
 }
 
 if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connecte sur cette page
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->login($login,$pass)){
@@ -43,12 +42,12 @@ if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connec
         $user->redirect('profile.php');
     }
     else{
-        echo "Invalid credentials<br>";
+        $error="Information incorrectes";
     }
 } else if(isset($_POST['reg'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->register($email,$login,$pass)){
@@ -243,7 +242,6 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
                 <div id="comzone">
                     <p>
                         <div>
-                            <!-- <img class="pp" src ="./img/jm.png"/> -->
                             <h4><b>Jean-Martin de Garonne :</b></h4>
                         </div>
                         Cet évènement revient chaque année à Capestang, c'est un incontournable de la pêche a la crevette tigrée ! A voir absolument !!

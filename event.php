@@ -2,9 +2,8 @@
 include_once('config.php');
 
 if(isset($_POST['log'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->login($login,$pass)){
@@ -16,12 +15,12 @@ if(isset($_POST['log'])){
         $user->redirect('profile.php');
     }
     else{
-        echo "Invalid credentials<br>";
+        $error="Information incorrectes";
     }
 } else if(isset($_POST['reg'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->register($email,$login,$pass)){

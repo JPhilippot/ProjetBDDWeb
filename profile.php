@@ -7,7 +7,6 @@ if(!$user->isLoggedin()){
 if(isset($_GET['deco'])){
     $user->logout();
     $user->redirect('index.php');
-
 }
 
 if(isset($_GET['contrib'])){
@@ -74,11 +73,19 @@ if(isset($_GET['contrib'])){
             </div>
 
             <div class="pacc">
-                <p>
-                    Voici les évenements auquels vous êtes inscrit:
-                </p>
+                Voici les évenements auquels vous êtes inscrit:<br />
                 <p>
                     <?php $user->listevent();?>
+                </p>
+
+                <hr />
+                <p>
+                    <?php
+                    if($user->isContributor()){
+                        echo "Voici la liste des événements que vous avez crées:<br />";
+                        $user->listeventCree();
+                    }
+                    ?>
                 </p>
             </div>
         </div>
