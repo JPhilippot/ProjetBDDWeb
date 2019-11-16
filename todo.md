@@ -9,7 +9,7 @@
 ## event.php:
 - [x] afficher plus d'attributs dans la table 
 - [ ] mouseover qui affiche la position de l'événement
-- [ ] faire un ordre (ORDER BY) pour les colonnes affichées
+- [x] faire un ordre (ORDER BY) pour les colonnes affichées
 
 ## carte.php:
 - [ ] tout
@@ -28,7 +28,7 @@
 - [ ] Ajouter un bouton pour supprimer les événements crée si l'utilisateur est contributeur
 
 ## admin.php:
-- [ ] afficher les utilisateurs en attente
+- [ ] afficher les utilisateurs en attente (-> Peut être une colonne dans Visiteur) 
 
 ## Modèle E-A actuel:
-![](./img/MCD.png)
+[//]:   ![](./img/MCD.png)

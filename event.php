@@ -34,8 +34,11 @@ if(isset($_GET['deco'])){
     $user->logout();
     $user->redirect('index.php');
 }
-?>
 
+if(!isset($_GET['order'])){
+    $_GET['order']="Titre";
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -104,7 +107,8 @@ if(isset($_GET['deco'])){
         <p>
             <table id="listevent">
                 <tr>
-                    <th>Titre</th><th>Date</th><th>Thème</th><th>Effectif Actuel</th>
+                    <th><a href="./event.php?pagenb=1&order=Titre">Titre</a></th><th><a href="./event.php?pagenb=1&order=Adresse">Localisation</a></th><th><a href="./event.php?pagenb=1&order=Date">Date</a></th>
+                    <th><a href="./event.php?pagenb=1&order=Nom">Thème</a></th><th><a href="./event.php?pagenb=1&order=EffectifActuel">EffectifActuel</a></th>
                 </tr>
                 <?php
                 
@@ -121,20 +125,19 @@ if(isset($_GET['deco'])){
                 try{
                     $stmt=$dbh->prepare("SELECT COUNT(*) FROM Evenement");
                     $stmt->execute();
-
+                    $order=$_GET['order'];
 
                     $nbrow=$stmt->fetch(PDO::FETCH_ASSOC);
                     $nbtotpages=ceil((intval($nbrow['COUNT(*)'])/ $nbrecpage));
 
-                    $stmt=$dbh->prepare("SELECT * FROM Evenement LIMIT :offset, :nbrec");
-
+                    $stmt=$dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Localisation.ID_Loc=Evenement.ID_Loc ORDER BY " . $order . " DESC LIMIT :offset, :nbrec");
                     $stmt->bindParam(":nbrec",$nbrecpage,PDO::PARAM_INT);
                     $stmt->bindParam(":offset",$offset,PDO::PARAM_INT);
                     $stmt->execute();
 
                     foreach ($stmt as $row) {
                         echo "<tr>";
-                        echo "<td><a href='contenu.php?lastevent={$row['ID_Event']}'>{$row['Titre']}</a></td><td>{$row['Date']}</td>";
+                        echo "<td><a href='contenu.php?lastevent={$row['ID_Event']}'>{$row['Titre']}</a></td><td>{$row['Adresse']}</td><td>{$row['Date']}</td>";
                         echo "<td>{$row['Nom']}</td><td>{$row['EffectifActuel']}/{$row['EffectifMax']}</td>";
                         echo "</tr>";
                     }
@@ -151,14 +154,14 @@ if(isset($_GET['deco'])){
             //Pagination
             $tmp=(int) $pagenb;
             ?>
-            <?php if($tmp!=1){echo "<a href='event.php?pagenb=" . ($tmp-1) . "'>Préc</a>";}?>
+            <?php if($tmp!=1){echo "<a href='event.php?pagenb=" . ($tmp-1) . "&order=" . $_GET['order'] . " '>Préc</a>";}?>
             <?php   
             if ($nbtotpages <= 10){   
                 for ($i = 1; $i <= $nbtotpages; $i++){
                     if ($i == $tmp) {
                         echo "<a class='active'>$i</a>"; 
                     }else{
-                        echo "<a href='event.php?pagenb=$i'>$i</a>";
+                        echo "<a href='event.php?pagenb=$i&order=" . $_GET['order'] . "'>$i</a>";
                     }
                 }
             }else{
@@ -167,49 +170,49 @@ if(isset($_GET['deco'])){
                         if ($i == $pagenb) {
                             echo "<a class='active'>$i</a>"; 
                         }else{
-                            echo "<a href='event.php?pagenb=$i'>$i</a>";
+                            echo "<a href='event.php?pagenb=$i&order=" . $_GET['order'] . "'>$i</a>";
                         }
                     }
                     echo "<a>...</a>";
                     $second=$nbtotpages-1;
-                    echo "<a href='event.php?pagenb=$second'>$second</a>";
-                    echo "<a href='event.php?pagenb=$nbtotpages'>$nbtotpages</a>";
+                    echo "<a href='event.php?pagenb=$second&order=" . $_GET['order'] . "'>$second</a>";
+                    echo "<a href='event.php?pagenb=$nbtotpages&order=" . $_GET['order'] . "'>$nbtotpages</a>";
                 }
 
 
                 else if($pagenb > 4 && $pagenb < $total_no_of_pages - 4) { 
-                    echo "<a href='event.php?pagenb=1'>1</a>";
-                    echo "<a href='event.php?pagenb=2'>2</a>";
+                    echo "<a href='event.php?pagenb=1&order" . $_GET['order'] . "'>1</a>";
+                    echo "<a href='event.php?pagenb=2&order=" . $_GET['order'] . "'>2</a>";
                     echo "<a>...</a>";
 
                     for ($i = $pagenb - $adjacents; $i <= $pagenb + $adjacents; $i++) { 
                         if ($i == $pagenb) {
                             echo "<a class='active'>$i</a>"; 
                         }else{
-                            echo "<a href='event.php?pagenb=$i'>$i</a>";
+                            echo "<a href='event.php?pagenb=$i&order=" . $_GET['order'] . "'>$i</a>";
                         }                  
                     }
                     echo "<a>...</a>";
                     $second=$nbtotpages-1;
-                    echo "<a href='event.php?pagenb=$second'>$second</a>";
-                    echo "<a href='event.php?pagenb=$nbtotpages'>$nbtotpages</a>";
+                    echo "<a href='event.php?pagenb=$second&order=" . $_GET['order'] . "'>$second</a>";
+                    echo "<a href='event.php?pagenb=$nbtotpages&order=" . $_GET['order'] . "'>$nbtotpages</a>";
                 }
                 else {
-                    echo "<a href='event.php?pagenb=1'>1</a>";
-                    echo "<a href='event.php?pagenb=2'>2</a>";
+                    echo "<a href='event.php?pagenb=1&order=" . $_GET['order'] . "'>1</a>";
+                    echo "<a href='event.php?pagenb=2&order=" . $_GET['order'] . "'>2</a>";
                     echo "<a>...</a>";
                     for ($i = $nbtotpages - 6; $i <= $nbtotpages; $i++) {
                         if ($i == $pagenb) {
                             echo "<a class='active'>$i</a>"; 
                         }else{
-                            echo "<a href='event.php?pagenb=$i'>$i</a>";
+                            echo "<a href='event.php?pagenb=$i&order=" . $_GET['order'] . "'>$i</a>";
                         }                   
                     }
                 }
             }   
             ?>
 
-            <?php if($tmp!=$nbtotpages){echo "<a href='event.php?pagenb=" . ($tmp+1) . "'>Suiv</a>";}?>
+            <?php if($tmp!=$nbtotpages){echo "<a href='event.php?pagenb=" . ($tmp+1) . "&order=" . $_GET['order'] . "'>Suiv</a>";}?>
         </div>
 
     </div>
