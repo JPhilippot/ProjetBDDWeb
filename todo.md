@@ -1,10 +1,11 @@
 # Todo list:
 
 ## Login/Register:
-- [ ] Refaire le chiffrement des mots des passe
+- [ ] Refaire le chiffrement des mots de passe
 
 ## Général:
 - [ ] Gestion de cookies
+- [ ] Refaire le modèle EA (Changer de logiciel)
 
 ## event.php:
 - [x] afficher plus d'attributs dans la table 
