@@ -16,6 +16,7 @@ if(!isset($_GET['lastevent'])){
         $row=$stmt->fetch(PDO::FETCH_ASSOC);
         if($stmt->rowCount()){
             $titre=$row['Titre'];
+            $idevent=$row['ID_Event'];
         }
         else{
             echo "ERROR";
@@ -94,6 +95,25 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
         $stmt->execute();
         $row['EffectifActuel']--;
         $user->redirect("contenu.php?lastevent=" . $_GET['lastevent']);
+    }
+    catch(PDOException $e){
+        echo $e->getMessage();
+        die();
+    }
+}
+
+if(isset($_POST['comm'])){
+    try{
+        unset($_POST['comm']);
+        $_POST['comm']=[];
+        echo "oi<br>";
+        $stmt=$dbh->prepare("INSERT INTO Commentaire(ID_Event,login,commentaire) VALUES(:idevent,:login,:comm)");
+        $stmt->bindParam(":idevent",$idevent);
+        $stmt->bindParam(":login",$_SESSION['user_session']);
+        $stmt->bindParam(":comm",$_POST['message']);
+        $stmt->execute();
+
+
     }
     catch(PDOException $e){
         echo $e->getMessage();
@@ -240,16 +260,26 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
             </div>
             <div>
                 <div id="comzone">
-                    <p>
-                        <div>
-                            <h4><b>Jean-Martin de Garonne :</b></h4>
-                        </div>
-                        Cet évènement revient chaque année à Capestang, c'est un incontournable de la pêche a la crevette tigrée ! A voir absolument !!
-                    </p>
+                    <?php
+                    try{
+                        $stmt=$dbh->prepare("SELECT * FROM Commentaire WHERE ID_Event=:idevent");
+                        $stmt->bindParam(":idevent",$idevent);
+                        $stmt->execute();
+
+                        foreach($stmt as $row){
+                            echo"<p><h4><b>{$row['login']}</b></h4>";
+                            echo $row['commentaire'];
+                            echo "</p>";
+                        }
+                    }
+                    catch(PDOException $e){
+                        echo $e->getMessage();
+                    }
+                    ?>
                 </div>
-                <form action="/" method="post" id="chat_form">
+                <form method="post" id="chat_form">
                     <input type="text" name="message" id="message" placeholder="Dîtes quelquechose..." size="50"/>
-                    <input type="submit" id="send_message" value="Envoyer"/>
+                    <input type="submit" name="comm" id="send_message" value="Envoyer"/>
                 </form>
             </div>
         </div>

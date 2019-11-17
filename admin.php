@@ -3,6 +3,18 @@ include_once('config.php');
 if(!$user->isLoggedin() && !$user->isAdministrator()){
     $user->redirect('index.php');
 }
+if(isset($_POST['newTheme'])){
+    try{
+        echo "oui<br />";
+        $stmt=$dbh->prepare('INSERT INTO Theme(Nom,login_Administrateur) VALUES(:tnom,:ulogin)');
+        $stmt->bindParam(":tnom",$_POST['nomTheme']);
+        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+        $stmt->execute();
+    }
+    catch(PDOException $e){
+        echo $e->getMessage();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,11 +57,27 @@ if(!$user->isLoggedin() && !$user->isAdministrator()){
         <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
     </div>
     <div id="MainContainer">
+        <h1>Bienvenue <?php echo $_SESSION['user_session'];?></h1>
         <!--Faire une liste des events-->
+        <h2>Validation contributeurs:</h2>
         <?php
-        $user->listevent();
+        echo "Il n'y a pas de contributeur a valider<br />";
         ?>
         <!--Faire un form de creation de theme-->
+        <h2>Création de thème:</h2>
+        <p>Voici les thèmes déjà existants:
+            <?php
+            $stmt=$dbh->prepare("SELECT Nom FROM Theme");
+            $stmt->execute();
+            foreach($stmt as $row){
+                echo $row['Nom'] . " ";
+            }
+            ?>
+        </p>
+        <form method="POST">
+            <input type="text" name="nomTheme" /><br />
+            <input type="submit" name="newTheme" value="Créer thème" />
+        </form>
     </div>
 </body>
 </html>

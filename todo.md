@@ -22,7 +22,7 @@
 
 ## contenu.php:
 - [ ] Système de notation
-- [ ] Système de commentaires
+- [x] Système de commentaires
 
 ## profile.php:
 - [ ] Faire en sorte que les visiteurs qui postulent pour devenir contributeurs soient mis en attente (-> à valider par un admin)

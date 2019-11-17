@@ -31,7 +31,7 @@ if(isset($_GET['contrib'])){
                 <th>
 
                     <div class="dropdown">
-                        <a href="./profile.php"><button class="dropbtn">Mon profile</button></a>
+                        <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
                     </div>
                 </th>
                 <th>

@@ -54,7 +54,7 @@ if(isset($_POST['create'])){
         <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
     </div>
     <div id="MainContainer">
-
+        <h1>Création d'événements:</h1>
         <form method="post">
             <label for="title">Titre:</label><br />
             <input type="text" name="title" id="title" placeholder="Titre"><br />
