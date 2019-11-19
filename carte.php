@@ -51,15 +51,6 @@ $events = $stmt->fetchAll();
     <script type="text/javascript" src="map.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="./style.css">
-
-    <style>
-        .map {
-            display: inline-block;
-            height: 500px;
-            width: 100%;
-            backface-visibility: hidden;
-        }
-    </style>
 </head>
 
 <body>
@@ -101,7 +92,11 @@ $events = $stmt->fetchAll();
             ?>
         </table>
     </div>
-    <div id="map" class="map"></div>
+    <div id="map" class="map" style="display: inline-block;
+            height:800px;
+            width: 100%;
+            backface-visibility: hidden;
+        "></div>
     <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 50px; display: none;' />
     <div id="popupProto" style="display:none; font-size:18pt; color:black; width:100px; height:100px"></div>
 
@@ -113,33 +108,33 @@ $events = $stmt->fetchAll();
                     source: new ol.source.OSM()
                 })
             ],
+            loadTilesWhileAnimating: true,
+            loadTilesWhileInteracting: true,
             view: new ol.View({
-                center: ol.proj.fromLonLat([3.8767337, 43.6112422]),
-                zoom: 13
+                center: ol.proj.fromLonLat([1.8883335, 46.603354]),
+                zoom: 6
             })
         });
     </script>
     </div>
-    
+
     <script>
-       
-    <?php 
-        foreach($events as $row) {
-            
-            echo 'addMarker('.$row["ID_Event"].',"'.$row["Titre"].'","'.$row["login"].'",'.$row["Latitude"].','.$row["Longitude"].',"'.$row["Adresse"].'");
-            $("#map").delegate("#marker'.$row["ID_Event"].'", "click", function() {
-                $("#marker'.$row["ID_Event"].'").show();
-                $("#marker'.$row["ID_Event"].'").click(function () {
-                    if($("#popup'.$row["ID_Event"].'").is(":visible")){
-                     $("#popup'.$row["ID_Event"].'").hide(); }
+        <?php
+        foreach ($events as $row) {
+
+            echo 'addMarker(' . $row["ID_Event"] . ',"' . $row["Titre"] . '","' . $row["login"] . '",' . $row["Latitude"] . ',' . $row["Longitude"] . ',"' . $row["Adresse"] . '");
+           $("#marker' . $row["ID_Event"] . '").show();
+                $("#marker' . $row["ID_Event"] . '").mouseover(function () {
+                    if($("#popup' . $row["ID_Event"] . '").is(":visible")){
+                     $("#popup' . $row["ID_Event"] . '").hide(); }
                     else{
-                        $("#popup'.$row["ID_Event"].'").show();
+                        $("#popup' . $row["ID_Event"] . '").show();
                         }});
-            });
             
-             $("#popup'.$row["ID_Event"].'").attr("style","width:50%;height:100%;background-color:white").hide();';
+             $("#popup' . $row["ID_Event"] . '").attr("style","width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();';
         }
-    ?></script>
+        ?>
+    </script>
 </body>
 
 </html>

@@ -37,7 +37,6 @@ insert into evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_
     "1",
     "Célébration"
 );
----------------------------------------------------------------------------------------------------
 
 Insert into Contributeur VALUES(
    "Mahmoud",

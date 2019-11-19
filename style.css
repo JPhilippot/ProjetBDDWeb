@@ -2,8 +2,23 @@
     margin: 0;
     padding: 0;
     border: 0;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
      
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: rgb(39, 172, 248)!important;
+}
+
+a:visited {
+  text-decoration: none;
+  color: rgb(95, 46, 150);
 }
 
 body{
