@@ -1,8 +1,11 @@
 <?php
 include_once('config.php');
+
+//Connexions utilisateur
 if($user->isLoggedin()){
     $user->redirect('profile.php');
-}else if(isset($_POST['log'])){
+}
+else if(isset($_POST['log'])){
     $login= trim($_POST['login']);
     $pass= trim($_POST['pass']);
 
@@ -42,7 +45,7 @@ if($user->isLoggedin()){
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
-    <?php if(isset($error)){echo "<script>alert('Erreur: " . $error . "')</script>";} //faire pop up plus propre ?>
+    <?php if(isset($error)){echo "<script>alert('Erreur: " . $error . "')</script>";} //Affiche un message d'erreur ?>
 </head>
 
 <body>

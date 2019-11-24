@@ -70,7 +70,7 @@ if(isset($_POST['create'])){
                 ?>
             </select><br />
             <label for="date">Date:</label><br />
-            <input type="date" name="date" value="date" /><br /> <!--a changer avec l'adresse-->
+            <input type="date" name="date" value="date" /><br />
             <label for="adress">Adresse: </label><br />
             <input type="text" name="adress" placeholder="Adresse" /><br />
             <label for="effect">Effectif maximum:</label><br />

@@ -3,7 +3,7 @@ include_once('config.php');
 if(!$user->isLoggedin() && !$user->isAdministrator()){
     $user->redirect('index.php');
 }
-if(isset($_POST['newTheme'])){
+if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en replissant le formulaire
     try{
         echo "oui<br />";
         $stmt=$dbh->prepare('INSERT INTO Theme(Nom,login_Administrateur) VALUES(:tnom,:ulogin)');
@@ -12,9 +12,10 @@ if(isset($_POST['newTheme'])){
         $stmt->execute();
     }
     catch(PDOException $e){
-        echo $e->getMessage();
+        $error="Une erreur est survenue !<br>$e->getMessage()";
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,6 +26,11 @@ if(isset($_POST['newTheme'])){
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
+    <?php
+        if(isset($error)){
+            echo "<script>alert($error);</script>";
+        }
+    ?>
 </head>
 
 <body>
@@ -33,7 +39,7 @@ if(isset($_POST['newTheme'])){
         <table>
             <th>
                 <div class="dropdown">
-                    <a href="./profile.php"><button class="dropbtn">Mon profile</button></a>
+                    <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
                 </div>
             </th>
             <th>
@@ -58,12 +64,10 @@ if(isset($_POST['newTheme'])){
     </div>
     <div id="MainContainer">
         <h1>Bienvenue <?php echo $_SESSION['user_session'];?></h1>
-        <!--Faire une liste des events-->
         <h2>Validation contributeurs:</h2>
         <?php
         echo "Il n'y a pas de contributeur a valider<br />";
         ?>
-        <!--Faire un form de creation de theme-->
         <h2>Création de thème:</h2>
         <p>Voici les thèmes déjà existants:
             <?php

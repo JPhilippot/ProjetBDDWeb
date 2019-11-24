@@ -1,16 +1,16 @@
 <?php
 include_once('config.php');
 
-if(isset($_GET['deco'])){
+if(isset($_GET['deco'])){  //L'utilisateur se deconnecte avec le boutton de "Se deconnecter"
     $user->logout();
     $user->redirect('index.php');
 }
 
-if(!isset($_GET['lastevent'])){
+if(!isset($_GET['lastevent'])){  //lastevent represente l'evenement que dont on va afficher les details
     $user->redirect('event.php');
 } else {
     try{
-        $stmt=$dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Evenement.ID_Loc=Localisation.ID_Loc AND ID_Event=:levent");
+        $stmt=$dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Evenement.ID_Loc=Localisation.ID_Loc AND ID_Event=:levent");  //Recuperation des informations de l'evenement
         $stmt->bindParam(":levent", $_GET['lastevent']);
         $stmt->execute();
         $row=$stmt->fetch(PDO::FETCH_ASSOC);
@@ -19,13 +19,11 @@ if(!isset($_GET['lastevent'])){
             $idevent=$row['ID_Event'];
         }
         else{
-            echo "ERROR";
-            die();
+            $erreur="Quelque chose s'est mal passée, l'événement est introuvable";
         }
     }
     catch(PDOException $e){
-        echo $e->getMessage();
-        die();
+        $erreur="Quelque chose s'est mal passée, l'événement est introuvable";
     }
 }
 
@@ -55,11 +53,12 @@ if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connec
         $user->redirect('profile.php');
     }
     else{
-        echo "ERROR<br>";
+        $erreur="Impossible de vous enregistre";
+
     }
 }
 
-if(isset($_GET['inscription']) && $user->isLoggedin()){
+if(isset($_GET['inscription']) && $user->isLoggedin()){ //Si l'utilisateur s'inscrit a l'evenement
     try{
         //Insertion de l'utilisateur dans la table S_inscrit
         $stmt=$dbh->prepare("INSERT INTO S_inscrit VALUES(:levent, :ulogin)");
@@ -75,13 +74,11 @@ if(isset($_GET['inscription']) && $user->isLoggedin()){
         $user->redirect("contenu.php?lastevent=" . $_GET['lastevent']);
     }
     catch(PDOException $e){
-        echo $e->getMessage();
-        die();
+        $erreur="Inscription impossible";
     }
 }
 
-if(isset($_GET['desinscription']) && $user->isLoggedin()){
-    //delete dans la table
+if(isset($_GET['desinscription']) && $user->isLoggedin()){ //Si l'utilisateur se desinscrit a l'evenement
     try{
         //Suppression de l'utilisateur de la table S_inscrit 
         $stmt=$dbh->prepare("DELETE FROM S_inscrit WHERE ID_Event=:levent AND  login=:ulogin");
@@ -97,8 +94,7 @@ if(isset($_GET['desinscription']) && $user->isLoggedin()){
         $user->redirect("contenu.php?lastevent=" . $_GET['lastevent']);
     }
     catch(PDOException $e){
-        echo $e->getMessage();
-        die();
+        $erreur="Erreur (c'est pas normal...)";
     }
 }
 
@@ -116,8 +112,7 @@ if(isset($_POST['comm'])){
 
     }
     catch(PDOException $e){
-        echo $e->getMessage();
-        die();
+        $erreur="Impossible de poster votre commentaire";
     }
 }
 ?>
@@ -233,13 +228,13 @@ if(isset($_POST['comm'])){
                 $eff=$row['EffectifActuel']; $max=$row['EffectifMax'];
                 if($user->isLoggedin()){
                     try{
-                        $stmt=$dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
+                        $stmt=$dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");  //Pour savoir si l'utilisateur est inscrit
                         $stmt->bindParam(":ulogin",$_SESSION['user_session']);
                         $stmt->bindParam(":levent",$_GET['lastevent']);
                         $stmt->execute();
                         $row=$stmt->fetch(PDO::FETCH_ASSOC);
 
-                        if($eff<$max){
+                        if($eff<$max){  //Savoir s'il ya des places disponibles
                             if(!$stmt->rowCount()){
                                 echo "<button><a href='contenu.php?lastevent={$_GET['lastevent']}&inscription=true'>S'inscrire</a></button>";
                             } else {
@@ -262,6 +257,7 @@ if(isset($_POST['comm'])){
                 <div id="comzone">
                     <?php
                     try{
+                        //Affichage des commentaires
                         $stmt=$dbh->prepare("SELECT * FROM Commentaire WHERE ID_Event=:idevent");
                         $stmt->bindParam(":idevent",$idevent);
                         $stmt->execute();

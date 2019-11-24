@@ -4,12 +4,12 @@ if(!$user->isLoggedin()){
     $user->redirect('index.php');
 }
 
-if(isset($_GET['deco'])){
+if(isset($_GET['deco'])){       //Deconnexion de l'utilisateur par le boutton "Se deconnecter"
     $user->logout();
     $user->redirect('index.php');
 }
 
-if(isset($_GET['contrib'])){
+if(isset($_GET['contrib'])){    //Si l'utilisateur fait une demande pour devenir contributeur
     $user->setContributeur();
 }
 ?>

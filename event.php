@@ -126,13 +126,13 @@ if(isset($_GET['filt'])){
                 <?php
                 
 
-                if (isset($_GET['pagenb'])) {
+                if (isset($_GET['pagenb'])) { //Recupere la page courante
                     $pagenb = $_GET['pagenb'];
                 } else {
                     $pagenb = 1;
                 }
 
-                $nbrecpage = 10;
+                $nbrecpage = 10;    //Possiblement changeable
                 $offset = ($pagenb-1) * $nbrecpage;
 
                 try{
@@ -156,7 +156,7 @@ if(isset($_GET['filt'])){
                     }
                 }
                 catch(PDOException $e){
-                    echo $e->getMessage();
+                    echo "Erreur durant le chargement de la page";
                     die();
                 }
                 ?>
@@ -223,9 +223,11 @@ if(isset($_GET['filt'])){
                     }
                 }
             }   
-            ?>
-
-            <?php if($tmp!=$nbtotpages){echo "<a href='event.php?pagenb=" . ($tmp+1) . "&order=" . $_GET['order'] . "&crois=" . $crois . "'>Suiv</a>";}?>
+            if($tmp!=$nbtotpages){
+                echo "<a href='event.php?pagenb=" . ($tmp+1) . "&order=" . $_GET['order'] . "&crois=" . $crois . "'>Suiv</a>";
+            }
+            //Fin pagination
+        ?>
         </div>
 
     </div>
