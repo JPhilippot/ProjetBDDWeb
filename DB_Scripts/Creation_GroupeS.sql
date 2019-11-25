@@ -126,8 +126,25 @@ CREATE TABLE S_inscrit(
 	,CONSTRAINT S_inscrit_PK PRIMARY KEY (ID_Event,login)
 
 	,CONSTRAINT S_inscrit_Evenement_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
-	,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN KEY (login) REFERENCES Visiteur(login)
-)ENGINE=InnoDB;
+	,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN
 
+#------------------------------------------------------------
+# Table: Commentaire
+#------------------------------------------------------------
+
+CREATE TABLE Commentaire(
+ID INT(11) NOT NULL AUTO_INCREMENT ,
+ID_Event INT(11) NOT NULL ,
+login VARCHAR(20) NOT NULL ,
+commentaire TEXT NOT NULL
+,CONSTRAINT Commentaire_PK PRIMARY KEY (ID, ID_Event)
+
+,CONSTRAINT Commentaire_Evenement_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
+,CONSTRAINT Commentaire_Visiteur_FK FOREIGN KEY (login) REFERENCES Visiteur(login)
+) ENGINE = InnoDB;
+
+
+ALTER TABLE Visiteur AUTO_INCREMENT=1;
 ALTER TABLE Evenement AUTO_INCREMENT=1;
-ALTER TABLE Localisation AUTO_INCREMENT=1; 
+ALTER TABLE Contributeur AUTO_INCREMENT=1;
+ALTER TABLE Localisation AUTO_INCREMENT=1;

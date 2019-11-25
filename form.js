@@ -12,7 +12,7 @@ function generationForm(val){
             form+="Login:<br>";
             form+='<input name="login" type="text" placeholder="'+"Adresse mail ou nom d'utilisateur"+'" required><br>';
             form+="Mot de passe:<br>";
-            form+="<input name='pass' type='text' placeholder='Mot de passe' required><br>";
+            form+="<input name='pass' type='password' placeholder='Mot de passe' required><br>";
             form+="Se souvenir de moi ";
             form+="<input name='remember' type='checkbox'><br>";
             form+="<input name='"+val+"' type='submit' value='Se connecter'>"
@@ -38,7 +38,7 @@ function generationForm(val){
             form+="email:<br>";
             form+="<input name='email' type='text' placeholder='Adresse mail' required><br>";
             form+="Mot de passe:<br>";
-            form+="<input name='pass' type='text' placeholder='Mot de passe' required><br>";
+            form+="<input name='pass' type='password' placeholder='Mot de passe' required><br>";
             form+="Se souvenir de moi ";
             form+="<input name='remember' type='checkbox'><br>";
             form+="<input name='"+val+"' type='submit' value="+"S'enregistrer"+">";
