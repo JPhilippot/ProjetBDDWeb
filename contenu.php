@@ -118,7 +118,6 @@ if(isset($_POST['comm'])){
 ?>
 <!DOCTYPE html>
 <html>
-
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
@@ -283,8 +282,7 @@ if(isset($_POST['comm'])){
                     <input type="text" name="message" id="message" placeholder="Dîtes quelquechose..." size="50"/>
                     <input type="submit" name="comm" id="send_message" value="Envoyer"/>
                 </form>
+            </div>
         </div>
-    </div>
-</body>
-
+    </body>
 </html>

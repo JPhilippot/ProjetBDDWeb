@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     border: 0;
+
     font-family: Arial, sans-serif;
      
 }
@@ -21,6 +22,9 @@ a:visited {
   color: rgb(95, 46, 150);
 }
 
+font-family: sans-serif;
+     
+}
 body{
     background-image: url("./img/mapbckgrnd.jpg");
     background-color: rgba(56, 121, 207, 0.582);
@@ -107,7 +111,11 @@ h1 >p{
       height: 65%;
       width: 65%;
   } */
- 
+  img{
+      padding :5%;
+      height: 65%;
+      width: 65%;
+  }
   #up
   {
     height: 15%;
@@ -186,4 +194,26 @@ h1 >p{
 #listevent > th,td{
   border: 1px solid black;
   padding: 15px;
+}
+
+
+/* Pagination */
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;<
+  border: 1px solid black;
+}
+
+.pagination a.active {
+  background-color: rgb(92, 158, 202);
+  color: white;
+  border: 1px solid rgb(92, 158, 202);
 }
