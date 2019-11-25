@@ -1,14 +1,16 @@
 <?php
-require_once 'config.php';
+include_once('config.php');
+
+//Connexions utilisateur
 if($user->isLoggedin()){
     $user->redirect('profile.php');
-}else if(isset($_POST['log'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+}
+else if(isset($_POST['log'])){
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
 
-    if($user->login($email,$login,$pass)){
+    if($user->login($login,$pass)){
         if(isset($_POST['remember'])){
             $cookie_name="user";
             $cookie_value=$_SESSION['user_session'];
@@ -17,12 +19,12 @@ if($user->isLoggedin()){
         $user->redirect('profile.php');
     }
     else{
-        echo "Invalid credentials<br>";
+        $error="Information incorrectes";
     }
 } else if(isset($_POST['reg'])){
-    $login= $_POST['login'];
-    $email= $_POST['email'];
-    $pass= $_POST['pass'];
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
     if($user->register($email,$login,$pass)){
@@ -39,9 +41,11 @@ if($user->isLoggedin()){
 
 <head>
     <meta charset="utf-8">
+    <title>Seek My Spot</title>
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
+    <?php if(isset($error)){echo "<script>alert('Erreur: " . $error . "')</script>";} //Affiche un message d'erreur ?>
 </head>
 
 <body>
@@ -82,7 +86,7 @@ if($user->isLoggedin()){
             
             <div class="pacc">
                 <p>
-                    <h1><b>Bienvenue sur [NOM DU SITE] !</b>
+                    <h1><b>Bienvenue sur Seek My Spot !</b>
                     </h1>
                     <b>[Description du site]</b>
                     {

@@ -2,34 +2,40 @@
 header('Content-type: text/html; charset=utf-8');
 include_once('config.php');
 
-if (isset($_POST['log'])) {
-    $login = $_POST['login'];
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
+//Connexions utilisateurs
+if(isset($_POST['log'])){
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
-
-    if ($user->login($email, $login, $pass)) {
-        if (isset($_POST['remember'])) {
-            $cookie_name = "user";
-            $cookie_value = $_SESSION['user_session'];
-            setcookie($cookie_name, $cookie_value, time() + (86400 * 30));
+    if($user->login($login,$pass)){
+        if(isset($_POST['remember'])){
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
         }
         $user->redirect('profile.php');
-    } else {
-        echo "Invalid credentials<br>";
     }
-} else if (isset($_POST['reg'])) {
-    $login = $_POST['login'];
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
+    else{
+        $error="Informations incorrectes";
+    }
+} else if(isset($_POST['reg'])){
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
-    if ($user->register($email, $login, $pass)) {
+    if($user->register($email,$login,$pass)){
         $user->redirect('profile.php');
-    } else {
+    }
+    else{
         echo "ERROR<br>";
     }
 }
+if(isset($_GET['deco'])){
+    $user->logout();
+    $user->redirect('index.php');
+}
+
 
 $stmt = $dbh->prepare("SELECT COUNT(*) FROM EVENEMENT;");
 $stmt->execute();

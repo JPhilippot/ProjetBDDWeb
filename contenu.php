@@ -1,78 +1,118 @@
 <?php
 include_once('config.php');
 
-if (!isset($_GET['lastevent'])) {
+if(isset($_GET['deco'])){  //L'utilisateur se deconnecte avec le boutton de "Se deconnecter"
+    $user->logout();
+    $user->redirect('index.php');
+}
+
+if(!isset($_GET['lastevent'])){  //lastevent represente l'evenement que dont on va afficher les details
     $user->redirect('event.php');
 } else {
-    try {
-        $stmt = $dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Evenement.ID_Loc=Localisation.ID_Loc AND ID_Event=:levent");
+    try{
+        $stmt=$dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Evenement.ID_Loc=Localisation.ID_Loc AND ID_Event=:levent");  //Recuperation des informations de l'evenement
         $stmt->bindParam(":levent", $_GET['lastevent']);
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($stmt->rowCount()) {
-            $titre = $row['Titre'];
-        } else {
-            echo "ERROR";
-            die();
+        $row=$stmt->fetch(PDO::FETCH_ASSOC);
+        if($stmt->rowCount()){
+            $titre=$row['Titre'];
+            $idevent=$row['ID_Event'];
         }
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-        die();
+        else{
+            $erreur="Quelque chose s'est mal passée, l'événement est introuvable";
+        }
+    }
+    catch(PDOException $e){
+        $erreur="Quelque chose s'est mal passée, l'événement est introuvable";
     }
 }
 
-if (isset($_POST['log'])) {           //Si l'utilisateur s'enregistre ou se connecte sur cette page
-    $login = $_POST['login'];
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
+if(isset($_POST['log'])){           //Si l'utilisateur s'enregistre ou se connecte sur cette page
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
 
-    if ($user->login($email, $login, $pass)) {
-        if (isset($_POST['remember'])) {
-            $cookie_name = "user";
-            $cookie_value = $_SESSION['user_session'];
-            setcookie($cookie_name, $cookie_value, time() + (86400 * 30));
+    if($user->login($login,$pass)){
+        if(isset($_POST['remember'])){
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
         }
         $user->redirect('profile.php');
-    } else {
-        echo "Invalid credentials<br>";
     }
-} else if (isset($_POST['reg'])) {
-    $login = $_POST['login'];
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
+    else{
+        $error="Information incorrectes";
+    }
+} else if(isset($_POST['reg'])){
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
-    if ($user->register($email, $login, $pass)) {
+    if($user->register($email,$login,$pass)){
         $user->redirect('profile.php');
-    } else {
-        echo "ERROR<br>";
+    }
+    else{
+        $erreur="Impossible de vous enregistre";
+
     }
 }
 
-if (isset($_GET['inscription']) && $user->isLoggedin()) {
-    //push dans la table
-    try {
-        $stmt = $dbh->prepare("INSERT INTO S_inscrit VALUES(:levent, :ulogin)");
-        $stmt->bindParam(":levent", $_GET['lastevent']);
-        $stmt->bindParam(":ulogin", $_SESSION['user_session']);
+if(isset($_GET['inscription']) && $user->isLoggedin()){ //Si l'utilisateur s'inscrit a l'evenement
+    try{
+        //Insertion de l'utilisateur dans la table S_inscrit
+        $stmt=$dbh->prepare("INSERT INTO S_inscrit VALUES(:levent, :ulogin)");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
         $stmt->execute();
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-        die();
+
+        //Mise à jour de EffectifActuel dans l'Evenement
+        $stmt=$dbh->prepare("UPDATE Evenement SET EffectifActuel=EffectifActuel+1 WHERE ID_Event=:levent");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->execute();
+        $row['EffectifActuel']++;
+        $user->redirect("contenu.php?lastevent=" . $_GET['lastevent']);
+    }
+    catch(PDOException $e){
+        $erreur="Inscription impossible";
     }
 }
 
-if (isset($_GET['desinscription']) && $user->isLoggedin()) {
-    //delete dans la table
-    try {
-        $stmt = $dbh->prepare("DELETE FROM S_inscrit WHERE ID_Event=:levent AND  login=:ulogin");
-        $stmt->bindParam(":levent", $_GET['lastevent']);
-        $stmt->bindParam(":ulogin", $_SESSION['user_session']);
+if(isset($_GET['desinscription']) && $user->isLoggedin()){ //Si l'utilisateur se desinscrit a l'evenement
+    try{
+        //Suppression de l'utilisateur de la table S_inscrit 
+        $stmt=$dbh->prepare("DELETE FROM S_inscrit WHERE ID_Event=:levent AND  login=:ulogin");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
         $stmt->execute();
-    } catch (PDOException $e) {
-        echo $e->getMessage();
-        die();
+
+        //Mise à jour de EffectifActuel dans l'Evenement
+        $stmt=$dbh->prepare("UPDATE Evenement SET EffectifActuel=EffectifActuel-1 WHERE ID_Event=:levent");
+        $stmt->bindParam(":levent",$_GET['lastevent']);
+        $stmt->execute();
+        $row['EffectifActuel']--;
+        $user->redirect("contenu.php?lastevent=" . $_GET['lastevent']);
+    }
+    catch(PDOException $e){
+        $erreur="Erreur (c'est pas normal...)";
+    }
+}
+
+if(isset($_POST['comm'])){
+    try{
+        unset($_POST['comm']);
+        $_POST['comm']=[];
+        echo "oi<br>";
+        $stmt=$dbh->prepare("INSERT INTO Commentaire(ID_Event,login,commentaire) VALUES(:idevent,:login,:comm)");
+        $stmt->bindParam(":idevent",$idevent);
+        $stmt->bindParam(":login",$_SESSION['user_session']);
+        $stmt->bindParam(":comm",$_POST['message']);
+        $stmt->execute();
+
+
+    }
+    catch(PDOException $e){
+        $erreur="Impossible de poster votre commentaire";
     }
 }
 ?>
@@ -107,17 +147,26 @@ if (isset($_GET['desinscription']) && $user->isLoggedin()) {
         <table>
             <th>
                 <?php
-                if ($user->isLoggedin()) {
+                 if($user->isLoggedin()){
                     echo '<div class="dropdown">
-                <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
-                </div>';
+            <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
+            </div>';
                 } else {
                     echo '<div class="dropdown">
-             <a href="./index.php"><button class="dropbtn">Accueil</button></a>
-             </div>';
+         <a href="./index.php"><button class="dropbtn">Accueil</button></a>
+         </div>';   
                 }
                 ?>
             </th>
+            <?php
+            if($user->isLoggedin()){
+                echo '<th>
+    <div class="dropdown">
+    <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+    </div>
+    </th>';
+            }
+            ?>
             <th>
                 <div class="dropdown">
                     <button class="dropbtn">Evénements</button>
@@ -128,23 +177,23 @@ if (isset($_GET['desinscription']) && $user->isLoggedin()) {
                 </div>
             </th>
             <?php
-            if (!$user->isLoggedin()) {
+              if(!$user->isLoggedin()){
                 echo '<th>
         <div id="connection" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
+        <button class="dropbtn" onclick =generationForm("log")>Se connecter</button>
         </div>
         </th>
         <th>
         <div id="enregister" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
+        <button class="dropbtn" onclick =generationForm("reg")>' . "S'enregistrer</button>
         </div>
         </th>";
             }
             ?>
         </table>
     </div>
-    <div id="up">
-        <a href="#Menu"><img id="arrow" src="img/up.png" /></a>
+    <div id ="up">
+        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
     </div>
 
     <div id="MainContainer">
@@ -211,19 +260,29 @@ if (isset($_GET['desinscription']) && $user->isLoggedin()) {
             ?>
         </div>
         <div>
-            <div id="comzone">
-                <p>
-                    <div>
-                        <!-- <img class="pp" src ="./img/jm.png"/> -->
-                        <h4><b>Jean-Martin de Garonne :</b></h4>
-                    </div>
-                    Cet évènement revient chaque année à Capestang, c'est un incontournable de la pêche a la crevette tigrée ! A voir absolument !!
-                </p>
-            </div>
-            <form action="/" method="post" id="chat_form">
-                <input type="text" name="message" id="message" placeholder="Dîtes quelquechose..." size="50" />
-                <input type="submit" id="send_message" value="Envoyer" />
-            </form>
+        <div id="comzone">
+                    <?php
+                    try{
+                        //Affichage des commentaires
+                        $stmt=$dbh->prepare("SELECT * FROM Commentaire WHERE ID_Event=:idevent");
+                        $stmt->bindParam(":idevent",$idevent);
+                        $stmt->execute();
+
+                        foreach($stmt as $row){
+                            echo"<p><h4><b>{$row['login']}</b></h4>";
+                            echo $row['commentaire'];
+                            echo "</p>";
+                        }
+                    }
+                    catch(PDOException $e){
+                        echo $e->getMessage();
+                    }
+                    ?>
+                </div>
+                <form method="post" id="chat_form">
+                    <input type="text" name="message" id="message" placeholder="Dîtes quelquechose..." size="50"/>
+                    <input type="submit" name="comm" id="send_message" value="Envoyer"/>
+                </form>
         </div>
     </div>
 </body>

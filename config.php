@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start();  //Debut de session -> toujours l'inclure dans les fichiers .php
 $DB_host = "localhost";
 $DB_user = "root";
 $DB_pass = "";
@@ -16,5 +16,4 @@ catch( PDOException $e){
 
 require_once 'User.php';
 $user= new User($dbh);
-
 ?>
