@@ -148,3 +148,8 @@ ALTER TABLE Visiteur AUTO_INCREMENT=1;
 ALTER TABLE Evenement AUTO_INCREMENT=1;
 ALTER TABLE Contributeur AUTO_INCREMENT=1;
 ALTER TABLE Localisation AUTO_INCREMENT=1;
+
+
+#------------------------------------------------------------
+# Trigger: SupprEvent
+#------------------------------------------------------------

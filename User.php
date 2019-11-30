@@ -103,6 +103,7 @@ class User{
     /**
      * Determine si l'utilisateur est un administrateur
      *
+     * @rework ne marche pas
      * @throws PDOException
      * @return bool true si l'utilisateur est administrateur false sinon
      */
@@ -111,6 +112,7 @@ class User{
             $stmt=$this->dbh->prepare("SELECT * FROM Administrateur WHERE login=:ulogin LIMIT 1");
             $stmt->bindParam(":ulogin",$_SESSION['user_session']);
             $stmt->execute();
+            $stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt->rowCount()){
                 return true;
             }else{
@@ -183,7 +185,7 @@ class User{
             if($stmt->rowCount()){
                 echo "<ul>";
                 for ($i=0; $i<$stmt->rowCount();$i++){
-                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
+                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . " </li>";
                     $tab=$stmt->fetch(PDO::FETCH_ASSOC);
                 }
                 echo "</ul><br>";
@@ -212,7 +214,7 @@ class User{
             if($stmt->rowCount()){
                 echo "<ul>";
                 for ($i=0; $i<$stmt->rowCount();$i++){
-                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
+                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "<a href='./profile.php?delete=true&event={$tab['ID_Event']}'<button>Supprimer</button></li>";
                     //Mettre un bouton pour le supprimer
                     $tab=$stmt->fetch(PDO::FETCH_ASSOC);
                 }

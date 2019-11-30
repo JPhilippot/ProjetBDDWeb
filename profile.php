@@ -12,14 +12,34 @@ if(isset($_GET['deco'])){       //Deconnexion de l'utilisateur par le boutton "S
 if(isset($_GET['contrib'])){    //Si l'utilisateur fait une demande pour devenir contributeur
     $user->setContributeur();
 }
+if(isset($_GET['delete'])){
+    try{
+        $_GET['delete']=[];
+        $stmt=$dbh->prepare('SELECT * FROM Evenement WHERE ID_Event=:event AND login=:login');  //Verification de l'identite de l'utilisateur
+        $stmt->bindParam(":event",$_GET['event']);
+        $stmt->bindParam(":login",$_SESSION['user_session']);
+        $stmt->execute();
+
+        if($stmt->rowCount()){
+            $stmt=$dbh->prepare('DELETE FROM Evenement WHERE ID_Event=:event');
+            $stmt->bindParam(":event",$_GET['event']);
+            $stmt->execute();
+            $user->redirect("profile.php");
+        }
+    }
+    catch(PDOExecption $e){
+        echo $e->getMessage();
+        $error="Une erreur est survenue pendant la suppression!";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html>
-
     <head>
         <meta charset="utf-8">
         <title>Seek My Spot</title>
         <link rel="stylesheet" type="text/css" href="./style.css">
+        <link rel="shortcut icon" href="img/favicon.ico">
         <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="form.js"></script>
     </head>
@@ -29,7 +49,6 @@ if(isset($_GET['contrib'])){    //Si l'utilisateur fait une demande pour devenir
         <div id="Menu">
             <table>
                 <th>
-
                     <div class="dropdown">
                         <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
                     </div>
@@ -90,5 +109,4 @@ if(isset($_GET['contrib'])){    //Si l'utilisateur fait une demande pour devenir
             </div>
         </div>
     </body>
-
 </html>

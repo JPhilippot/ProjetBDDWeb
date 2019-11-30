@@ -3,11 +3,10 @@
     padding: 0;
     border: 0;
     font-family: sans-serif;
-     
+
 }
 
 body{
-    background-image: url("./img/mapbckgrnd.jpg");
     background-color: rgba(56, 121, 207, 0.582);
     background-attachment: fixed;
 }
@@ -36,14 +35,14 @@ h1 >p{
     font-size: 16px;
     border: none;
   }
-  
+
   /* The container <div> - needed to position the dropdown content */
   .dropdown {
     width: 100%;
     position: relative;
     display: inline-block;
   }
-  
+
   /* Dropdown Content (Hidden by Default) */
   .dropdown-content {
     display: none;
@@ -53,7 +52,7 @@ h1 >p{
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
   }
-  
+
   /* Links inside the dropdown */
   .dropdown-content a {
     color: black;
@@ -61,13 +60,13 @@ h1 >p{
     text-decoration: none;
     display: block;
   }
-  
+
   /* Change color of dropdown links on hover */
   .dropdown-content a:hover {background-color: #ddd;}
-  
+
   /* Show the dropdown menu on hover */
   .dropdown:hover .dropdown-content {display: block;}
-  
+
   /* Change the background color of the dropdown button when the dropdown content is shown */
   .dropdown:hover .dropbtn {background-color: #357ab3;}
 
@@ -87,12 +86,6 @@ h1 >p{
       float : right;
   }
 
-  img{
-      padding :5%;
-      height: 65%;
-      width: 65%;
-  }
- 
   #up
   {
     height: 15%;
@@ -120,7 +113,7 @@ h1 >p{
 
 #desc {
     display: inline-block;
-    
+
     background-color: rgba(255, 255, 255, 0.774);
 }
 #comzone{

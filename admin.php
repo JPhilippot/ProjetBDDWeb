@@ -26,6 +26,7 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
+    <link rel="shortcut icon" href="img/favicon.ico">
     <?php
         if(isset($error)){
             echo "<script>alert($error);</script>";
