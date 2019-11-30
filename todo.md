@@ -9,7 +9,7 @@
 
 ## event.php:
 - [x] afficher plus d'attributs dans la table 
-- [ ] mouseover qui affiche la position de l'événement
+~~- [ ] mouseover qui affiche la position de l'événement~~
 - [x] faire un ordre (ORDER BY) pour les colonnes affichées
 
 ## carte.php:
