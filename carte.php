@@ -70,11 +70,20 @@ $events = $stmt->fetchAll();
                     echo '<div class="dropdown"><a href="./profile.php"><button class="dropbtn">Mon profil</button></a> </div>';
                 } else {
                     echo '<div class="dropdown">
-             <a href="./index.php"><button class="dropbtn">Accueil</button></a>
-             </div>';
+                    <a href="./index.php"><button class="dropbtn">Accueil</button></a>
+                    </div>';
                 }
                 ?>
             </th>
+            <?php
+            if($user->isLoggedin()){
+                echo '<th>
+                <div class="dropdown">
+                <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+                </div>
+                </th>';
+            }
+            ?>
             <th>
                 <div class="dropdown">
                     <button class="dropbtn">Evénements</button>
@@ -87,24 +96,24 @@ $events = $stmt->fetchAll();
             <?php
             if (!$user->isLoggedin()) {
                 echo '<th>
-        <div id="connection" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
-        </div>
-        </th>
-        <th>
-        <div id="enregister" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
-        </div>
-        </th>";
+                <div id="connection" class="dropdown">
+                <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
+                </div>
+                </th>
+                <th>
+                <div id="enregister" class="dropdown">
+                <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
+                </div>
+                </th>";
             }
             ?>
         </table>
     </div>
     <div id="map" class="map" style="display: inline-block;
-            height:800px;
-            width: 100%;
-            backface-visibility: hidden;
-        "></div>
+    height:800px;
+    width: 100%;
+    backface-visibility: hidden;
+    "></div>
     <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 50px; display: none;' />
     <div id="popupProto" style="display:none; font-size:18pt; color:black; width:100px; height:100px"></div>
 
@@ -112,9 +121,9 @@ $events = $stmt->fetchAll();
         var map = new ol.Map({
             target: 'map',
             layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
             ],
             loadTilesWhileAnimating: true,
             loadTilesWhileInteracting: true,
@@ -124,24 +133,24 @@ $events = $stmt->fetchAll();
             })
         });
     </script>
-    </div>
+</div>
 
-    <script>
-        <?php
-        foreach ($events as $row) {
+<script>
+    <?php
+    foreach ($events as $row) {
 
-            echo 'addMarker(' . $row["ID_Event"] . ',"' . $row["Titre"] . '","' . $row["login"] . '",' . $row["Latitude"] . ',' . $row["Longitude"] . ',"' . $row["Adresse"] . '");
-           $("#marker' . $row["ID_Event"] . '").show();
-                $("#marker' . $row["ID_Event"] . '").mouseover(function () {
-                    if($("#popup' . $row["ID_Event"] . '").is(":visible")){
-                     $("#popup' . $row["ID_Event"] . '").hide(); }
-                    else{
-                        $("#popup' . $row["ID_Event"] . '").show();
-                        }});
-            
-             $("#popup' . $row["ID_Event"] . '").attr("style","width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();';
-        }
-        ?>
-    </script>
-</body>
-</html>
+        echo 'addMarker(' . $row["ID_Event"] . ',"' . $row["Titre"] . '","' . $row["login"] . '",' . $row["Latitude"] . ',' . $row["Longitude"] . ',"' . $row["Adresse"] . '");
+        $("#marker' . $row["ID_Event"] . '").show();
+        $("#marker' . $row["ID_Event"] . '").mouseover(function () {
+            if($("#popup' . $row["ID_Event"] . '").is(":visible")){
+               $("#popup' . $row["ID_Event"] . '").hide(); }
+               else{
+                $("#popup' . $row["ID_Event"] . '").show();
+                }});
+                
+                $("#popup' . $row["ID_Event"] . '").attr("style","width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();';
+            }
+            ?>
+        </script>
+    </body>
+    </html>
