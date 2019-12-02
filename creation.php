@@ -58,7 +58,7 @@ if(isset($_POST['create'])){
         <h1>Création d'événements:</h1>
         <form method="post">
             <label for="title">Titre:</label><br />
-            <input type="text" name="title" id="title" placeholder="Titre"><br />
+            <input type="text" name="title" id="title" placeholder="Titre" required><br />
             <label for="theme">Thème:</label><br />
             <select type="select" name="theme" id="theme">
                 <option value="" selected>Choisir</option>
@@ -71,11 +71,11 @@ if(isset($_POST['create'])){
                 ?>
             </select><br />
             <label for="date">Date:</label><br />
-            <input type="date" name="date" value="date" /><br />
+            <input type="date" name="date" value="date" required/><br />
             <label for="adress">Adresse: </label><br />
-            <input type="text" name="adress" placeholder="Adresse" /><br />
+            <input type="text" name="adress" placeholder="Adresse" required/><br />
             <label for="effect">Effectif maximum:</label><br />
-            <input type="number" name="effect" value=0 /><br />
+            <input type="number" name="effect" value=0 required/><br />
             <label for="desc">Description: </label><br />
             <textarea name="desc" id="desc" rows="5" cols="50" maxlength=300 placeholder="Description(300 caractères max)"></textarea><br />
 
