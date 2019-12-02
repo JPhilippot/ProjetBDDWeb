@@ -153,3 +153,14 @@ ALTER TABLE Localisation AUTO_INCREMENT=1;
 #------------------------------------------------------------
 # Trigger: SupprEvent
 #------------------------------------------------------------
+
+DELIMITER $$
+CREATE TRIGGER suppr_event BEFORE DELETE ON Evenement
+FOR EACH ROW
+    BEGIN
+        DELETE FROM S_inscrit WHERE OLD.ID_Event=S_inscrit.ID_Event;
+        DELETE FROM Commentaire WHERE OLD.ID_Event=Commentaire.ID_Event;
+    END;
+    $$
+DELIMITER ;
+
