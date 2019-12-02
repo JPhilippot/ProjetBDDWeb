@@ -240,24 +240,28 @@ $now=strtotime(date("Y-m-d"));
         </div>
         <div>
             <?php
-            if ($user->isLoggedin() && $eventDate>$now) {
-                try {
-                    $stmt = $dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
-                    $stmt->bindParam(":ulogin", $_SESSION['user_session']);
-                    $stmt->bindParam(":levent", $_GET['lastevent']);
-                    $stmt->execute();
-                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            try {
+                $stmt = $dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
+                $stmt->bindParam(":ulogin", $_SESSION['user_session']);
+                $stmt->bindParam(":levent", $_GET['lastevent']);
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                    if (!$stmt->rowCount()) {
-                        echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&inscription=true'>S'inscrire</a></button>";
-                    } else {
-                        $userReg=true;
-                        echo "<b>Vous êtes inscrit à cet évènement.</b><br>";
-                        echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&desinscription=true'>Se désinscrire</a></button>";
-                    }
-                } catch (PDOException $e) {
-                    echo $e->getMessage();
+                if($stmt->rowCount()){
+                    $userReg=true;
                 }
+            } catch (PDOException $e) {
+                echo $e->getMessage();
+            }
+            if ($user->isLoggedin() && $eventDate>$now) {
+
+                if (!$stmt->rowCount()) {
+                    echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&inscription=true'>S'inscrire</a></button>";
+                } else {
+                    echo "<b>Vous êtes inscrit à cet évènement.</b><br>";
+                    echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&desinscription=true'>Se désinscrire</a></button>";
+                }
+                
             } else if($eventDate<$now){
                 echo "L'évènement est passé.<br>";
             }else{
@@ -287,9 +291,17 @@ $now=strtotime(date("Y-m-d"));
             </div>
             <?php
             if($eventDate<=$now && isset($userReg)){
+                //TODO: Ajouter le CSS pour faire des étoiles
                 echo "<form method='post' id='chat_form'>
-                <input type='text' name='message' id='message' placeholder='Dîtes quelquechose...' size='50'/>
+                <textarea name='message' id='message' rows='5' cols='50' maxlength=300 placeholder='Dites quelque chose...'></textarea><br />
                 <input type='submit' name='comm' id='send_message' value='Envoyer'/>
+                <div class='rating'>
+                <span><input type='radio' name='rating' id='str5' value='5'></span>
+                <span><input type='radio' name='rating' id='str4' value='4'></span>
+                <span><input type='radio' name='rating' id='str3' value='3'></span>
+                <span><input type='radio' name='rating' id='str2' value='2'></span>
+                <span><input type='radio' name='rating' id='str1' value='1'></span>
+                </div>
                 </form>";
             }
             ?>
