@@ -4,16 +4,15 @@ if(!$user->isLoggedin() && !$user->isAdministrator()){
     $user->redirect('index.php');
 }
 if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en replissant le formulaire
-    try{
-        echo "oui<br />";
-        $stmt=$dbh->prepare('INSERT INTO Theme(Nom,login_Administrateur) VALUES(:tnom,:ulogin)');
-        $stmt->bindParam(":tnom",$_POST['nomTheme']);
-        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
-        $stmt->execute();
-    }
-    catch(PDOException $e){
-        $error="Une erreur est survenue !<br>$e->getMessage()";
-    }
+try{
+    $stmt=$dbh->prepare('INSERT INTO Theme(Nom,login_Administrateur) VALUES(:tnom,:ulogin)');
+    $stmt->bindParam(":tnom",$_POST['nomTheme']);
+    $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+    $stmt->execute();
+}
+catch(PDOException $e){
+    $error="Une erreur est survenue !<br>$e->getMessage()";
+}
 }
 
 ?>
@@ -28,9 +27,9 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
     <script type="text/javascript" src="form.js"></script>
     <link rel="shortcut icon" href="img/favicon.ico">
     <?php
-        if(isset($error)){
-            echo "<script>alert($error);</script>";
-        }
+    if(isset($error)){
+        echo "<script>alert($error);</script>";
+    }
     ?>
 </head>
 
@@ -68,6 +67,20 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
         <h2>Validation contributeurs:</h2>
         <?php
         echo "Il n'y a pas de contributeur a valider<br />";
+        ?>
+
+        <h2>Liste des contributeurs:</h2>
+        <?php
+        try{
+            $stmt=$dbh->prepare("SELECT * FROM Contributeur");
+            $stmt->execute();
+            foreach ($stmt as $row) {
+                echo "<li>{$row['login']} <a href='admin.php?suppr={$row['login']}'>Supprimer compte</a></li>";
+            }
+        }
+        catch(PDOException $e){
+            echo $e->getMessage();
+        }
         ?>
         <h2>Création de thème:</h2>
         <p>Voici les thèmes déjà existants:
