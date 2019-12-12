@@ -5,12 +5,12 @@ if(!$user->isLoggedin()){
 }
 
 if(isset($_GET['deco'])){       //Deconnexion de l'utilisateur par le boutton "Se deconnecter"
-    $user->logout();
-    $user->redirect('index.php');
+$user->logout();
+$user->redirect('index.php');
 }
 
 if(isset($_GET['contrib'])){    //Si l'utilisateur fait une demande pour devenir contributeur
-    $user->setContributeur();
+$user->setContributeur();
 }
 if(isset($_GET['delete'])){
     try{
@@ -35,63 +35,62 @@ if(isset($_GET['delete'])){
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Seek My Spot</title>
-        <link rel="stylesheet" type="text/css" href="./style.css">
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
-        <script type="text/javascript" src="form.js"></script>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seek My Spot</title>
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="form.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
 
-    <body>
+<body>
 
-        <div id="Menu">
-            <table>
-                <th>
-                    <div class="dropdown">
-                        <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
-                    </div>
-                </th>
-                <th>
+    <div id="Menu">
+        <table>
+            <th>
+                <div class="dropdown">
+                    <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
+                </div>
+            </th>
+            <th>
 
-                    <div class="dropdown">
-                        <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+                <div class="dropdown">
+                    <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+                </div>
+            </th>
+            <th>
+                <div class="dropdown">
+                    <button class="dropbtn">Evénements</button>
+                    <div class="dropdown-content">
+                        <a href="./carte.php">Carte</a>
+                        <a href="./event.php">Liste</a>
                     </div>
-                </th>
-                <th>
-                    <div class="dropdown">
-                        <button class="dropbtn">Evénements</button>
-                        <div class="dropdown-content">
-                            <a href="./carte.php">Carte</a>
-                            <a href="./event.php">Liste</a>
-                        </div>
-                    </div>
-                </th>
-            </table>
-        </div>
-        <div id ="up">
-            <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
-        </div>
-        <div id="MainContainer">
+                </div>
+            </th>
+        </table>
+    </div>
+    <div id ="up">
+        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
+    </div>
+    <div id="container">
+        <div id="content">
             <?php
             if(!$user->isContributor()){
                 echo "<div class='dropdown'>
-                    <a href='./profile.php?contrib=true'><button class='dropbtn'>Devenir contributeur</button></a>
-                    </div>";
+                <a href='./profile.php?contrib=true'><button class='dropbtn'>Devenir contributeur</button></a>
+                </div>";
             }else{
                 echo "<div class='dropdown'>
-                    <a href='./creation.php'><button class='dropbtn'>Créer un événement</button></a>";
+                <a href='./creation.php'><button class='dropbtn'>Créer un événement</button></a>";
             }
             ?>
 
-            <div class="pacc">
-                <p>
-                    <h1><b>Bienvenue <?php echo $_SESSION['user_session'];?> !</b></h1>
-                </p>
-            </div>
-
-            <div class="pacc">
+            <h1><b>Bienvenue <?php echo $_SESSION['user_session'];?> !</b></h1>
                 Voici les évenements auquels vous êtes inscrit:<br />
                 <p>
                     <?php $user->listevent();?>
@@ -106,7 +105,7 @@ if(isset($_GET['delete'])){
                     }
                     ?>
                 </p>
-            </div>
         </div>
-    </body>
+    </div>
+</body>
 </html>

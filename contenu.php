@@ -103,10 +103,11 @@ if(isset($_POST['comm'])){
     try{
         unset($_POST['comm']);
         $_POST['comm']=[];
-        $stmt=$dbh->prepare("INSERT INTO Commentaire(ID_Event,login,commentaire) VALUES(:idevent,:login,:comm)");
+        $stmt=$dbh->prepare("INSERT INTO Commentaire(ID_Event,login,commentaire,Note) VALUES(:idevent,:login,:comm,:note)");
         $stmt->bindParam(":idevent",$idevent);
         $stmt->bindParam(":login",$_SESSION['user_session']);
         $stmt->bindParam(":comm",$_POST['message']);
+        $stmt->bindParam(":note",$_POST['rating']);
         $stmt->execute();
     }
     catch(PDOException $e){
@@ -121,26 +122,39 @@ $now=strtotime(date("Y-m-d"));
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
+    
     <title><?php echo $row['Titre'] ?> - <?php echo $row['login'] ?></title>
     <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
         .map {
             display: inline-block;
-            margin-left: 22%;
+            margin-left: 5%;
             margin-right: 25%;
             height: 500px;
             width: 900px;
             backface-visibility: hidden;
         }
     </style>
+
+    <?php
+    if(isset($error)){
+        echo "<script>alert($error);</script>";
+    }
+    ?>
+
 </head>
 
 <body>
@@ -197,114 +211,116 @@ $now=strtotime(date("Y-m-d"));
         <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
     </div>
 
-    <div id="MainContainer">
-        <div class="pacc">
-            <p>
-                <h1><b><?php echo $row['Titre']; ?></b>
-                </h1>
-            </p>
-        </div>
-        <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 50px; display: none;' />
+    <div id="container">
+        <div id="content">
+            <h1>
+                <b><?php echo $row['Titre']; ?></b>
+            </h1>
+            <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 50px; display: none;' />
 
-        <div id="map" class="map"></div>
-        <script type="text/javascript">
-            var map = new ol.Map({
-                target: 'map',
-                layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                })
-                ],
-                view: new ol.View({
-                    center: ol.proj.fromLonLat([<?php echo $row['Longitude'] . ", " . $row['Latitude']; ?>]),
-                    zoom: 17
-                })
-            });
+            <div id="map" class="map"></div>
+            <script type="text/javascript">
+                var map = new ol.Map({
+                    target: 'map',
+                    layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM()
+                    })
+                    ],
+                    view: new ol.View({
+                        center: ol.proj.fromLonLat([<?php echo $row['Longitude'] . ", " . $row['Latitude']; ?>]),
+                        zoom: 17
+                    })
+                });
 
-            let id = <?php echo $row['ID_Event'] ?>;
-            let image = $("#markerProto").clone();
-            image.attr("id", "marker" + id).attr('style', 'display:block').attr('height', '70px').attr('width', '50px');
-            $("body").append(image);
-            var marker = document.getElementById('marker' + id);
-            map.addOverlay(new ol.Overlay({
-                position: ol.proj.fromLonLat([<?php echo $row['Longitude'] . ", " . $row['Latitude']; ?>]),
-                positioning: 'bottom-right',
-                element: marker
-            }));
-        </script>
-        <div>
-            <p>Date: <?php echo $event['Date'];?></p>
-        </div>
-        <div id="desc">
-            <p><b>Description:</b><br> <?php echo $row['Descriptif']; ?></p>
-        </div>
-        <div>
-            <?php
-            try {
-                $stmt = $dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
-                $stmt->bindParam(":ulogin", $_SESSION['user_session']);
-                $stmt->bindParam(":levent", $_GET['lastevent']);
-                $stmt->execute();
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if($stmt->rowCount()){
-                    $userReg=true;
-                }
-            } catch (PDOException $e) {
-                echo $e->getMessage();
-            }
-            if ($user->isLoggedin() && $eventDate>$now) {
-
-                if (!$stmt->rowCount()) {
-                    echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&inscription=true'>S'inscrire</a></button>";
-                } else {
-                    echo "<b>Vous êtes inscrit à cet évènement.</b><br>";
-                    echo "<button><a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&desinscription=true'>Se désinscrire</a></button>";
-                }
-                
-            } else if($eventDate<$now){
-                echo "L'évènement est passé.<br>";
-            }else{
-                echo '<button onclick=' . '"' . "alert('Vous devez être connecté(e) pour pouvoir vous inscrire')" . '"' . ">S'inscrire</button>";
-            }
-            ?>
-        </div>
-        <div>
-            <div id="comzone">
+                let id = <?php echo $row['ID_Event'] ?>;
+                let image = $("#markerProto").clone();
+                image.attr("id", "marker" + id).attr('style', 'display:block').attr('height', '70px').attr('width', '50px');
+                $("body").append(image);
+                var marker = document.getElementById('marker' + id);
+                map.addOverlay(new ol.Overlay({
+                    position: ol.proj.fromLonLat([<?php echo $row['Longitude'] . ", " . $row['Latitude']; ?>]),
+                    positioning: 'bottom-right',
+                    element: marker
+                }));
+            </script>
+            <div>
+                <p>Date: <?php echo $event['Date'];?></p>
+            </div>
+            <div id="desc">
+                <p><b>Description:</b><br> <?php echo $row['Descriptif']; ?></p>
+                <p>Effectif: <?php echo $row['EffectifActuel'] . "/" . $row['EffectifMax']?></p>
+            </div>
+            <div>
                 <?php
-                try{
-                        //Affichage des commentaires
-                    $stmt=$dbh->prepare("SELECT * FROM Commentaire WHERE ID_Event=:idevent");
-                    $stmt->bindParam(":idevent",$idevent);
+                try {
+                    $stmt = $dbh->prepare("SELECT * FROM S_inscrit WHERE login=:ulogin AND ID_Event=:levent");
+                    $stmt->bindParam(":ulogin", $_SESSION['user_session']);
+                    $stmt->bindParam(":levent", $_GET['lastevent']);
                     $stmt->execute();
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                    foreach($stmt as $row){
-                        echo"<p><h4><b>{$row['login']}</b></h4>";
-                        echo $row['commentaire'];
-                        echo "</p>";
+                    if($stmt->rowCount()){
+                        $userReg=true;
                     }
-                }
-                catch(PDOException $e){
+                } catch (PDOException $e) {
                     echo $e->getMessage();
+                }
+                if ($user->isLoggedin() && $eventDate>$now) {
+
+                    if (!$stmt->rowCount()) {
+                        echo "<a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&inscription=true'><button class='btn btn-primary'>S'inscrire</button></a>";
+                    } else {
+                        echo "<b>Vous êtes inscrit à cet évènement.</b><br>";
+                        echo "<a href='contenu.php?lastevent=" . $_GET['lastevent'] . "&desinscription=true'><button class='btn btn-primary'>Se désinscrire</button></a>";
+                    }
+
+                } else if($eventDate<$now){
+                    echo "L'évènement est passé.<br>";
+                    echo "Note: " . $event['Note'] . "/5<br>";
+                }else{
+                    echo '<button class="btn btn-primary"onclick=' . '"' . "alert('Vous devez être connecté(e) pour pouvoir vous inscrire')" . '"' . ">S'inscrire</button>";
                 }
                 ?>
             </div>
-            <?php
-            if($eventDate<=$now && isset($userReg)){
-                //TODO: Ajouter le CSS pour faire des étoiles
-                echo "<form method='post' id='chat_form'>
-                <textarea name='message' id='message' rows='5' cols='50' maxlength=300 placeholder='Dites quelque chose...'></textarea><br />
-                <input type='submit' name='comm' id='send_message' value='Envoyer'/>
-                <div class='rating'>
-                <span><input type='radio' name='rating' id='str5' value='5'></span>
-                <span><input type='radio' name='rating' id='str4' value='4'></span>
-                <span><input type='radio' name='rating' id='str3' value='3'></span>
-                <span><input type='radio' name='rating' id='str2' value='2'></span>
-                <span><input type='radio' name='rating' id='str1' value='1'></span>
+            <div>
+                <div id="comzone">
+                    <?php
+                    try{
+                        //Affichage des commentaires
+                        $stmt=$dbh->prepare("SELECT * FROM Commentaire WHERE ID_Event=:idevent");
+                        $stmt->bindParam(":idevent",$idevent);
+                        $stmt->execute();
+ 
+                        foreach($stmt as $row){
+                            echo"<p><h4><b>{$row['login']}</b>  {$row['Note']}/5</h4>";
+                            echo $row['commentaire'];
+                            echo "</p>";
+                        }
+                    }
+                    catch(PDOException $e){
+                        $erreur=$e->getMessage();
+                    }
+                    //Fin affichage des commentaires
+                    ?>
                 </div>
-                </form>";
-            }
-            ?>
+                <?php
+                if($eventDate<=$now && isset($userReg)){
+                //TODO: Ajouter le CSS pour faire des étoiles
+                    echo "<form method='post' id='chat_form'>
+                    <textarea class='form-control' name='message' id='message' rows='5' cols='50' maxlength=300 placeholder='Dites quelque chose...'></textarea><br />
+                    <div class='rating'>
+                    <span><input type='radio' name='rating' id='str1' value='1'></span>
+                    <span><input type='radio' name='rating' id='str2' value='2'></span>
+                    <span><input type='radio' name='rating' id='str3' value='3'></span>
+                    <span><input type='radio' name='rating' id='str4' value='4'></span>
+                    <span><input type='radio' name='rating' id='str5' value='5'></span>
+                    </div>
+                    <input class='btn btn-primary' type='submit' name='comm' id='send_message' value='Envoyer'/>
+                    </form>";
+                }
+                ?>
+            </div>
         </div>
     </div>
 </body>

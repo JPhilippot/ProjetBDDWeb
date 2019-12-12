@@ -25,7 +25,7 @@ class User{
      * @return PDOStatment
      * @access public
      */
-    public function register($email, $login, $pass):PDOStatment{
+    public function register($email, $login, $pass){ //TODO: Faire en sorte que les admin puissent se co
         try{
             $hash=password_hash($pass,PASSWORD_DEFAULT);
             echo strlen($hash) . "<br>";
@@ -36,8 +36,6 @@ class User{
             $stmt->bindParam(":upass",$hash);
             $stmt->execute();
             $_SESSION['user_session']=$login;
-
-            return $stmt;
         }
         catch(PDOException $e){
             echo $e->getMessage();
@@ -58,17 +56,34 @@ class User{
      */
     public function login($login,$pass): bool{
         try{
+            //Verification compte Visiteur
             $stmt=$this->dbh->prepare("SELECT * FROM Visiteur WHERE login=:ulogin OR email=:ulogin LIMIT 1");
             $stmt->execute(array(":ulogin"=>$login));
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
+            
             if($stmt->rowCount()){
                 if(password_verify($pass,$row['password'])){
                     $_SESSION['user_session']=$login;
 
                     return true;
-                } else {
-                    return false;
+                } 
+            }
+
+            //Verification compte Administrateur
+            $stmt=$this->dbh->prepare("SELECT * FROM Administrateur WHERE login=:ulogin OR email=:ulogin LIMIT 1");
+            $stmt->bindParam(":ulogin",$login);
+            $stmt->execute();
+            $row=$stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($stmt->rowCount()){
+                if(password_verify($pass,$row['password'])){
+                    $_SESSION['user_session']=$login;
+
+                    return true;
                 }
+            }
+            else{
+                return false;
             }
         }
         catch(PDOException $e){
@@ -214,7 +229,7 @@ class User{
             if($stmt->rowCount()){
                 echo "<ul>";
                 for ($i=0; $i<$stmt->rowCount();$i++){
-                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "<a href='./profile.php?delete=true&event={$tab['ID_Event']}'<button>Supprimer</button></li>";
+                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "<a href='./profile.php?delete=true&event={$tab['ID_Event']}'> <button class='btn btn-warning'>Supprimer</button></a></li>";
                     //Mettre un bouton pour le supprimer
                     $tab=$stmt->fetch(PDO::FETCH_ASSOC);
                 }
@@ -277,7 +292,7 @@ class User{
      * @access public
      */
     public function logout(): bool{
-        session_destroy();            //->pas utiliser sur la fac
+        //session_destroy();            //->pas utiliser sur la fac
         unset($_SESSION['user_session']);
         $_SESSION=[];
         return true;

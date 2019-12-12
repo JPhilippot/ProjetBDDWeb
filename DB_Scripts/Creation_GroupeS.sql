@@ -15,6 +15,7 @@ Nom du groupe : S
 # Table: Administrateur
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Administrateur CASCADE; 
 CREATE TABLE Administrateur(
         login    Varchar (50) NOT NULL ,
         email    Text NOT NULL ,
@@ -27,6 +28,7 @@ CREATE TABLE Administrateur(
 # Table: Visiteur
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Visiteur CASCADE;
 CREATE TABLE Visiteur(
         login    Varchar (20) NOT NULL ,
         email    Text NOT NULL ,
@@ -39,6 +41,7 @@ CREATE TABLE Visiteur(
 # Table: Contributeur
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Contributeur CASCADE;
 CREATE TABLE Contributeur(
         login                Varchar (20) NOT NULL ,
         email                Text NOT NULL ,
@@ -54,6 +57,7 @@ CREATE TABLE Contributeur(
 # Table: Localisation
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Localisation CASCADE;
 CREATE TABLE Localisation(
         ID_Loc    Int  Auto_increment  NOT NULL ,
         Adresse   Text NOT NULL ,
@@ -67,6 +71,7 @@ CREATE TABLE Localisation(
 # Table: Thème
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Theme CASCADE;
 CREATE TABLE Theme(
         Nom                  Varchar (20) NOT NULL ,
         login                Varchar (50) ,
@@ -82,6 +87,7 @@ CREATE TABLE Theme(
 # Table: Evenement
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Evenement CASCADE;
 CREATE TABLE Evenement(
         ID_Event       Int  Auto_increment  NOT NULL ,
         Titre          Varchar (50) NOT NULL ,
@@ -101,25 +107,10 @@ CREATE TABLE Evenement(
 
 
 #------------------------------------------------------------
-# Table: Supprime_Event
-#------------------------------------------------------------
-
-CREATE TABLE Supprime_Event(
-        login              Varchar (50) NOT NULL ,
-        ID_Event           Int NOT NULL ,
-        login_Contributeur Varchar (20) NOT NULL
-	,CONSTRAINT Supprime_Event_PK PRIMARY KEY (login,ID_Event,login_Contributeur)
-
-	,CONSTRAINT Supprime_Event_Administrateur_FK FOREIGN KEY (login) REFERENCES Administrateur(login)
-	,CONSTRAINT Supprime_Event_Evenement0_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
-	,CONSTRAINT Supprime_Event_Contributeur1_FK FOREIGN KEY (login_Contributeur) REFERENCES Contributeur(login)
-)ENGINE=InnoDB;
-
-
-#------------------------------------------------------------
 # Table: S_inscrit
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS S_inscrit CASCADE;
 CREATE TABLE S_inscrit(
         ID_Event Int NOT NULL ,
         login    Varchar (20) NOT NULL
@@ -132,6 +123,7 @@ CREATE TABLE S_inscrit(
 # Table: Commentaire
 #------------------------------------------------------------
 
+#DROP TABLE IF EXISTS Commentaire CASCADE;
 CREATE TABLE Commentaire(
 ID INT(11) NOT NULL AUTO_INCREMENT ,
 ID_Event INT(11) NOT NULL ,
@@ -153,6 +145,7 @@ ALTER TABLE Localisation AUTO_INCREMENT=1;
 #------------------------------------------------------------
 # Trigger: SupprEvent
 #------------------------------------------------------------
+DROP TRIGGER IF EXISTS suppr_event;
 
 DELIMITER $$
 CREATE TRIGGER suppr_event BEFORE DELETE ON Evenement
@@ -160,6 +153,26 @@ FOR EACH ROW
     BEGIN
         DELETE FROM S_inscrit WHERE OLD.ID_Event=S_inscrit.ID_Event;
         DELETE FROM Commentaire WHERE OLD.ID_Event=Commentaire.ID_Event;
+    END;
+    $$
+DELIMITER ;
+
+#------------------------------------------------------------
+# Trigger: note_event
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS note_event;
+
+DELIMITER $$
+CREATE TRIGGER  note_event AFTER INSERT ON Commentaire
+FOR EACH ROW
+    BEGIN
+        DECLARE newnote integer;
+        DECLARE nbnotes integer;
+
+        SET @nbnotes :=(SELECT COUNT(*) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
+        SET @newnote :=(SELECT CAST(SUM(Note)/nbnotes AS INTEGER) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
+
+        UPDATE Evenement SET Note=newnote WHERE ID_Event=NEW.ID_Event;
     END;
     $$
 DELIMITER ;

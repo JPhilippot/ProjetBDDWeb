@@ -1,6 +1,4 @@
 <?php
-
-header('Content-type: text/html; charset=utf-8');
 include_once('config.php');
 
 //Connexions utilisateurs
@@ -51,7 +49,7 @@ $events = $stmt->fetchAll();
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
-    <title>Nom du site</title>
+    <title>Seek My Spot - Carte</title>
 
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>

@@ -16,7 +16,12 @@ else if(isset($_POST['log'])){
             $cookie_value=$_SESSION['user_session'];
             setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
         }
-        $user->redirect('profile.php');
+        if($user->isAdministrateur()){
+            $user->redirect('admin.php');
+        }
+        else{
+            $user->redirect('profile.php');
+        }
     }
     else{
         $error="Information incorrectes";
@@ -83,7 +88,7 @@ else if(isset($_POST['log'])){
             <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
             
         </div>
-        <div id="MainContainer">
+        <div id="content">
             
             <div class="pacc">
                 <p>

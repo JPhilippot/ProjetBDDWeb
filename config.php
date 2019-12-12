@@ -13,6 +13,7 @@ catch( PDOException $e){
     echo $e->getMessage();
     die();
 }
+header('Content-type: text/html; charset=utf-8');
 
 require_once 'User.php';
 $user= new User($dbh);
