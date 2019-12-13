@@ -51,8 +51,9 @@ $events = $stmt->fetchAll();
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
-    <title>Nom du site</title>
-
+    <title>Carte des Events !</title>
+    <link rel="shortcut icon" href="img/favicon.ico">
+  
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
     <script type="text/javascript" src="map.js"></script>
@@ -60,51 +61,47 @@ $events = $stmt->fetchAll();
     <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 
-<body>
-    <div id="Menu">
-        <table>
-            <th>
-                <?php
-                if ($user->isLoggedin()) {
-                    echo '<div class="dropdown"><a href="./profile.php"><button class="dropbtn">Mon profil</button></a> </div>';
-                } else {
-                    echo '<div class="dropdown">
-             <a href="./index.php"><button class="dropbtn">Accueil</button></a>
-             </div>';
-                }
-                ?>
-            </th>
-            <th>
-                <div class="dropdown">
-                    <button class="dropbtn">Evénements</button>
-                    <div class="dropdown-content">
-                        <a href="./carte.php">Carte</a>
-                        <a href="./event.php">Liste</a>
-                    </div>
-                </div>
-            </th>
-            <?php
-            if (!$user->isLoggedin()) {
-                echo '<th>
+<body style="margin: 0; height: 100%; overflow: hidden">
+<div id="Menu">
+
+<div class="dropdown" id="globe-btn">
+    <a href="./index.php"><img src="./img/globe.png" /></a>
+</div>
+<table style="margin:0;">
+    <th>
+
+    </th>
+    <th>
+        <div class="dropdown">
+            <button class="dropbtn">Evénements</button>
+            <div class="dropdown-content">
+                <a href="./carte.php">Carte</a>
+                <a href="./event.php">Liste</a>
+            </div>
+        </div>
+    </th>
+    <th>
         <div id="connection" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
+            <button class="dropbtn" onclick=generationForm('log')>Se connecter</button>
         </div>
-        </th>
-        <th>
+    </th>
+    <th>
         <div id="enregister" class="dropdown">
-        <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
+            <button class="dropbtn" onclick=generationForm('reg')>S'enregistrer</button>
         </div>
-        </th>";
-            }
-            ?>
-        </table>
-    </div>
-    <div id="map" class="map" style="display: inline-block;
+    </th>
+</table>
+</div>
+<div style="color:white;margin:1%; align-text:center">
+    <h2>Voici la carte des Evénements !</h2> <p>Depuis cette carte vous pouvez visualiser tous les évènements répertoriés sur notre site au travers du monde. Vous pouvez également les visualiser sous forme de liste en cliquant <a href="./event.php">ici</a>.</p>
+</div>
+
+    <div id="map" class="map" style="display: inline-block; margin-top:2.5%;
             height:800px;
             width: 100%;
             backface-visibility: hidden;
         "></div>
-    <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 50px; display: none;' />
+    <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 45px; display: none;' />
     <div id="popupProto" style="display:none; font-size:18pt; color:black; width:100px; height:100px"></div>
 
     <script type="text/javascript">

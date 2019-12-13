@@ -1,18 +1,17 @@
 <?php
 include_once('config.php');
-if(!$user->isLoggedin() && !$user->isAdministrator()){
+if (!$user->isLoggedin() && !$user->isAdministrator()) {
     $user->redirect('index.php');
 }
-if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en replissant le formulaire
-    try{
+if (isset($_POST['newTheme'])) { //L'administrateur crée un nouveau thème en replissant le formulaire
+    try {
         echo "oui<br />";
-        $stmt=$dbh->prepare('INSERT INTO Theme(Nom,login_Administrateur) VALUES(:tnom,:ulogin)');
-        $stmt->bindParam(":tnom",$_POST['nomTheme']);
-        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+        $stmt = $dbh->prepare('INSERT INTO Theme(Nom,login_Administrateur) VALUES(:tnom,:ulogin)');
+        $stmt->bindParam(":tnom", $_POST['nomTheme']);
+        $stmt->bindParam(":ulogin", $_SESSION['user_session']);
         $stmt->execute();
-    }
-    catch(PDOException $e){
-        $error="Une erreur est survenue !<br>$e->getMessage()";
+    } catch (PDOException $e) {
+        $error = "Une erreur est survenue !<br>$e->getMessage()";
     }
 }
 
@@ -27,16 +26,20 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
     <?php
-        if(isset($error)){
-            echo "<script>alert($error);</script>";
-        }
+    if (isset($error)) {
+        echo "<script>alert($error);</script>";
+    }
     ?>
 </head>
 
 <body>
 
     <div id="Menu">
-        <table>
+
+        <div class="dropdown" id="globe-btn">
+            <a href="./index.php"><img src="./img/globe.png" /></a>
+        </div>
+        <table style="margin:0;">
             <th>
                 <div class="dropdown">
                     <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
@@ -59,11 +62,8 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
             </th>
         </table>
     </div>
-    <div id ="up">
-        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
-    </div>
     <div id="MainContainer">
-        <h1>Bienvenue <?php echo $_SESSION['user_session'];?></h1>
+        <h1>Bienvenue <?php echo $_SESSION['user_session']; ?></h1>
         <h2>Validation contributeurs:</h2>
         <?php
         echo "Il n'y a pas de contributeur a valider<br />";
@@ -71,9 +71,9 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
         <h2>Création de thème:</h2>
         <p>Voici les thèmes déjà existants:
             <?php
-            $stmt=$dbh->prepare("SELECT Nom FROM Theme");
+            $stmt = $dbh->prepare("SELECT Nom FROM Theme");
             $stmt->execute();
-            foreach($stmt as $row){
+            foreach ($stmt as $row) {
                 echo $row['Nom'] . " ";
             }
             ?>
@@ -84,4 +84,5 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
         </form>
     </div>
 </body>
+
 </html>

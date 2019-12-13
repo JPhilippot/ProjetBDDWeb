@@ -2,14 +2,15 @@
     margin: 0;
     padding: 0;
     border: 0;
-
+    
     font-family: Arial, sans-serif;
      
 }
 
 a {
   text-decoration: none;
-  color: black;
+  font-weight: bold;
+  color: rgb(14, 47, 136);
 }
 
 a:hover {
@@ -22,34 +23,32 @@ a:visited {
   color: rgb(95, 46, 150);
 }
 
-font-family: sans-serif;
-     
-}
 body{
-    background-image: url("./img/mapbckgrnd.jpg");
-    background-color: rgba(56, 121, 207, 0.582);
-    background-attachment: fixed;
+    /* background-image: url("./img/mapbckgrnd.jpg"); */
+    background-color: #202124;
+    /* background-attachment: fixed; */
 }
 
 #MainContainer {
     padding: 2%;
     font-size: 150%;
     margin: 10%;
-    margin-top: 5%;;
-    background-color: rgba(171, 228, 225, 0.822);
+    margin-top: 5%;
+    background-color: #77B3D4;
+    color:white;
     border-radius: 10px;
 }
 h1 >p{
     text-align: center;
 }
 #Menu{
-    background-color: rgb(92, 158, 202);
+    background-color:#77B3D4;
 }
 
 /* Dropdown Button */
 .dropbtn {
     width:100%;
-    background-color: rgb(92, 158, 202);
+    background-color:#77B3D4;
     color: white;
     padding: 16px;
     font-size: 16px;
@@ -105,36 +104,25 @@ h1 >p{
   .right {
       float : right;
   }
-
-   /* img .pacc{
-      padding :5%;
-      height: 65%;
-      width: 65%;
-  } */
-  img{
-      padding :5%;
-      height: 65%;
-      width: 65%;
-  }
   #up
   {
-    height: 15%;
-    width: 9%;
-    margin-left:90%;
+    height: 10%;
+    width: 6%;
+    margin-top: 1%;
+    margin-left:83.7%;
     position: fixed;
+    border-radius: 60%;
+    display: inline-block;
+  
 
   }
-  #arrow
-  {
-
+  
+  #up:hover{
+    height: 10.5%;
+    width: 6.5%;
     border-radius: 60%;
     display: inline-block;
   }
-
-  #up:hover{
-    height: 20%;
-    width: 13;
-}
 
 /* .map{
     height: auto;
@@ -169,7 +157,7 @@ h1 >p{
     width:20%;
     height:20%;
     text-align:center;
-    background-color: rgb(92, 158, 202);;
+    background-color: #77B3D4;;
     color: white;
 }
 #registration {
@@ -180,7 +168,7 @@ h1 >p{
     width:20%;
     height:20%;
     text-align:center;
-    background-color: rgb(92, 158, 202);;
+    background-color: #77B3D4;;
     color: white;
 }
 
@@ -208,12 +196,19 @@ h1 >p{
   float: left;
   padding: 8px 16px;
   text-decoration: none;
-  transition: background-color .3s;<
+  transition: background-color .3s;
   border: 1px solid black;
 }
 
 .pagination a.active {
-  background-color: rgb(92, 158, 202);
+  background-color: #77B3D4;
   color: white;
-  border: 1px solid rgb(92, 158, 202);
+  border: 1px solid #77B3D4;
+}
+#globe-btn{
+  margin:0;
+  margin-right: 0.5%;
+  width:6.5%; 
+  clear:none;
+  float:left;
 }
