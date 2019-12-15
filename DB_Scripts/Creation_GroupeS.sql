@@ -91,7 +91,8 @@ CREATE TABLE Evenement(
         EffectifActuel Int NOT NULL ,
         login          Varchar (20) NOT NULL ,
         ID_Loc         Int NOT NULL ,
-        Nom            Varchar (20) NOT NULL
+        Nom            Varchar (20) NOT NULL,
+        Note           Float NOT NULL
 	,CONSTRAINT Evenement_PK PRIMARY KEY (ID_Event)
 
 	,CONSTRAINT Evenement_Contributeur_FK FOREIGN KEY (login) REFERENCES Contributeur(login)
@@ -121,7 +122,8 @@ CREATE TABLE Commentaire(
 ID INT(11) NOT NULL AUTO_INCREMENT ,
 ID_Event INT(11) NOT NULL ,
 login VARCHAR(20) NOT NULL ,
-commentaire TEXT NOT NULL
+commentaire TEXT NOT NULL ,
+Note Int NOT NULL
 ,CONSTRAINT Commentaire_PK PRIMARY KEY (ID, ID_Event)
 
 ,CONSTRAINT Commentaire_Evenement_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
@@ -200,13 +202,11 @@ DELIMITER $$
 CREATE TRIGGER  note_event AFTER INSERT ON Commentaire
 FOR EACH ROW
     BEGIN
-        DECLARE newnote double;
-        DECLARE nbnotes integer;
+        DECLARE newnote float;
 
-        SET @nbnotes :=(SELECT COUNT(*) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
-        SET @newnote :=(SELECT SUM(Note)/nbnotes FROM Commentaire WHERE ID_Event=NEW.ID_Event);
+        SET @newnote :=(SELECT AVG(Note) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
 
-        UPDATE Evenement SET Note=newnote WHERE ID_Event=NEW.ID_Event;
+        UPDATE Evenement SET Note=@newnote WHERE ID_Event=NEW.ID_Event;
     END;
     $$
 DELIMITER ;
