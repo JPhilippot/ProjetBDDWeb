@@ -19,11 +19,24 @@ if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en rep
 
 if(isset($_GET['supprTh'])){ //L'administrateur supprime un theme
     try{
+        
         $stmt=$dbh->prepare("DELETE FROM Theme WHERE Nom=:tnom");
         $stmt->bindParam(':tnom',$_GET['supprTh']);
         $stmt->execute();
+    
     }
     catch(PDOException $e){
+        $error="Une erreur est survenue! " . $e->getMessage();
+    }
+}
+if(isset($_GET['supprContr'])){
+    try {
+        
+        $stmt=$dbh->prepare("DELETE FROM Contributeur WHERE login=:ulogin");
+        $stmt->bindParam(":ulogin", $_GET['supprContr']);
+        $stmt->execute();
+
+    } catch (PDOException $e) {
         $error="Une erreur est survenue! " . $e->getMessage();
     }
 }

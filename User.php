@@ -28,7 +28,6 @@ class User{
     public function register($email, $login, $pass){ //TODO: Faire en sorte que les admin puissent se co
         try{
             $hash=password_hash($pass,PASSWORD_DEFAULT);
-            echo strlen($hash) . "<br>";
             $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
             $stmt->bindParam(":uemail",$email);
