@@ -15,7 +15,6 @@ Nom du groupe : S
 # Table: Administrateur
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Administrateur CASCADE; 
 CREATE TABLE Administrateur(
         login    Varchar (50) NOT NULL ,
         email    Text NOT NULL ,
@@ -28,7 +27,6 @@ CREATE TABLE Administrateur(
 # Table: Visiteur
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Visiteur CASCADE;
 CREATE TABLE Visiteur(
         login    Varchar (20) NOT NULL ,
         email    Text NOT NULL ,
@@ -41,7 +39,6 @@ CREATE TABLE Visiteur(
 # Table: Contributeur
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Contributeur CASCADE;
 CREATE TABLE Contributeur(
         login                Varchar (20) NOT NULL ,
         email                Text NOT NULL ,
@@ -57,7 +54,6 @@ CREATE TABLE Contributeur(
 # Table: Localisation
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Localisation CASCADE;
 CREATE TABLE Localisation(
         ID_Loc    Int  Auto_increment  NOT NULL ,
         Adresse   Text NOT NULL ,
@@ -71,7 +67,6 @@ CREATE TABLE Localisation(
 # Table: Thème
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Theme CASCADE;
 CREATE TABLE Theme(
         Nom                  Varchar (20) NOT NULL ,
         login                Varchar (50) ,
@@ -87,7 +82,6 @@ CREATE TABLE Theme(
 # Table: Evenement
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Evenement CASCADE;
 CREATE TABLE Evenement(
         ID_Event       Int  Auto_increment  NOT NULL ,
         Titre          Varchar (50) NOT NULL ,
@@ -110,20 +104,19 @@ CREATE TABLE Evenement(
 # Table: S_inscrit
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS S_inscrit CASCADE;
 CREATE TABLE S_inscrit(
         ID_Event Int NOT NULL ,
         login    Varchar (20) NOT NULL
 	,CONSTRAINT S_inscrit_PK PRIMARY KEY (ID_Event,login)
 
 	,CONSTRAINT S_inscrit_Evenement_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
-	,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN
+	,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN KEY (login) REFERENCES Visiteur(login)
+)ENGINE=InnoDB;
 
 #------------------------------------------------------------
 # Table: Commentaire
 #------------------------------------------------------------
 
-#DROP TABLE IF EXISTS Commentaire CASCADE;
 CREATE TABLE Commentaire(
 ID INT(11) NOT NULL AUTO_INCREMENT ,
 ID_Event INT(11) NOT NULL ,
@@ -144,7 +137,7 @@ ALTER TABLE Localisation AUTO_INCREMENT=1;
 #------------------------------------------------------------
 # Trigger: SupprEvent
 #------------------------------------------------------------
-#DROP PROCEDURE IF EXISTS proc_suppr_event;
+DROP PROCEDURE IF EXISTS proc_suppr_event;
 
 DELIMITER $$
 CREATE PROCEDURE proc_suppr_event(IN id integer)
