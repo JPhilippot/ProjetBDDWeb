@@ -141,6 +141,20 @@ ALTER TABLE Evenement AUTO_INCREMENT=1;
 ALTER TABLE Contributeur AUTO_INCREMENT=1;
 ALTER TABLE Localisation AUTO_INCREMENT=1;
 
+#------------------------------------------------------------
+# Trigger: SupprEvent
+#------------------------------------------------------------
+#DROP PROCEDURE IF EXISTS proc_suppr_event;
+
+DELIMITER $$
+CREATE PROCEDURE proc_suppr_event(IN id integer)
+    BEGIN
+        DELETE FROM S_inscrit WHERE id=S_inscrit.ID_Event;
+        DELETE FROM Commentaire WHERE id=Commentaire.ID_Event;
+    END
+    $$
+DELIMITER ;
+
 
 #------------------------------------------------------------
 # Trigger: SupprEvent
@@ -151,8 +165,35 @@ DELIMITER $$
 CREATE TRIGGER suppr_event BEFORE DELETE ON Evenement
 FOR EACH ROW
     BEGIN
-        DELETE FROM S_inscrit WHERE OLD.ID_Event=S_inscrit.ID_Event;
-        DELETE FROM Commentaire WHERE OLD.ID_Event=Commentaire.ID_Event;
+        CALL proc_suppr_event(OLD.ID_Event);
+    END;
+    $$
+DELIMITER ;
+
+#------------------------------------------------------------
+# Trigger: SupprTheme
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS suppr_theme;
+
+DELIMITER $$
+CREATE TRIGGER suppr_theme BEFORE DELETE ON Theme
+FOR EACH ROW
+    BEGIN
+        DELETE FROM Evenement WHERE Evenement.Nom=OLD.Nom;
+    END;
+    $$
+DELIMITER ;
+
+#------------------------------------------------------------
+# Trigger: SupprContributeur
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS suppr_contributeur;
+
+DELIMITER $$
+CREATE TRIGGER suppr_contributeur BEFORE DELETE ON Contributeur
+FOR EACH ROW
+    BEGIN
+        DELETE FROM Evenement WHERE Evenement.login=OLD.login;
     END;
     $$
 DELIMITER ;
@@ -166,11 +207,11 @@ DELIMITER $$
 CREATE TRIGGER  note_event AFTER INSERT ON Commentaire
 FOR EACH ROW
     BEGIN
-        DECLARE newnote integer;
+        DECLARE newnote double;
         DECLARE nbnotes integer;
 
         SET @nbnotes :=(SELECT COUNT(*) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
-        SET @newnote :=(SELECT CAST(SUM(Note)/nbnotes AS INTEGER) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
+        SET @newnote :=(SELECT SUM(Note)/nbnotes FROM Commentaire WHERE ID_Event=NEW.ID_Event);
 
         UPDATE Evenement SET Note=newnote WHERE ID_Event=NEW.ID_Event;
     END;
