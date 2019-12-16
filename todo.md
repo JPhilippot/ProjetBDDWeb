@@ -1,11 +1,11 @@
 # Todo list:
 
 ## Login/Register:
-- [ ] Refaire le chiffrement des mots de passe
+- [x] Refaire le chiffrement des mots de passe
 
 ## Général:
-- [ ] Gestion de cookies
-- [ ] Refaire le modèle EA (Changer de logiciel)
+- [ ] ~~Gestion de cookies~~
+- [x] Refaire le modèle EA (Changer de logiciel)
 
 ## event.php:
 - [x] afficher plus d'attributs dans la table 
@@ -18,10 +18,10 @@
 ## creation.php:
 - [x] les options du select
 - [x] la gestion des dates(pas compatible IE et passe pas avec mySQL)
-- [ ] gestion des adresse (longitude latitude)
+- [x] gestion des adresse (longitude latitude)
 
 ## contenu.php:
-- [ ] ==Système de notation==
+- [x] Système de notation
 - [x] Système de commentaires
 
 ## profile.php:
