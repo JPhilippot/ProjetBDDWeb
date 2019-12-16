@@ -43,7 +43,8 @@ CREATE TABLE Contributeur(
         login                Varchar (20) NOT NULL ,
         email                Text NOT NULL ,
         password             Varchar (80) NOT NULL ,
-        login_Administrateur Varchar (50)
+       login_Administrateur Varchar (50),
+        Attente 			 Boolean NOT NULL
 	,CONSTRAINT Contributeur_PK PRIMARY KEY (login)
 
 	,CONSTRAINT Contributeur_Administrateur_FK FOREIGN KEY (login_Administrateur) REFERENCES Administrateur(login)
@@ -55,11 +56,12 @@ CREATE TABLE Contributeur(
 #------------------------------------------------------------
 
 CREATE TABLE Localisation(
-        ID_Loc    Int  Auto_increment  NOT NULL ,
+        ID_Loc INT AUTO_INCREMENT NOT NULL,
         Adresse   Text NOT NULL ,
         Latitude  Double NOT NULL ,
-        Longitude Double NOT NULL
-	,CONSTRAINT Localisation_PK PRIMARY KEY (ID_Loc)
+        Longitude Double NOT NULL,
+        CONSTRAINT Localisation_PK PRIMARY KEY (ID_Loc),
+        CONSTRAINT Localisation_UC UNIQUE (Adresse(255),Latitude,Longitude)
 )ENGINE=InnoDB;
 
 
@@ -91,28 +93,13 @@ CREATE TABLE Evenement(
         EffectifActuel Int NOT NULL ,
         login          Varchar (20) NOT NULL ,
         ID_Loc         Int NOT NULL ,
-        Nom            Varchar (20) NOT NULL
+       Nom            Varchar (20) NOT NULL,
+        Note           Float NOT NULL
 	,CONSTRAINT Evenement_PK PRIMARY KEY (ID_Event)
 
 	,CONSTRAINT Evenement_Contributeur_FK FOREIGN KEY (login) REFERENCES Contributeur(login)
-	,CONSTRAINT Evenement_Localisation0_FK FOREIGN KEY (ID_Loc) REFERENCES Localisation(ID_Loc)
+	,CONSTRAINT Evenement_Localisation_FK FOREIGN KEY (ID_Loc) REFERENCES Localisation(ID_Loc)
 	,CONSTRAINT Evenement_Theme1_FK FOREIGN KEY (Nom) REFERENCES Theme(Nom)
-)ENGINE=InnoDB;
-
-
-#------------------------------------------------------------
-# Table: Supprime_Event
-#------------------------------------------------------------
-
-CREATE TABLE Supprime_Event(
-        login              Varchar (50) NOT NULL ,
-        ID_Event           Int NOT NULL ,
-        login_Contributeur Varchar (20) NOT NULL
-	,CONSTRAINT Supprime_Event_PK PRIMARY KEY (login,ID_Event,login_Contributeur)
-
-	,CONSTRAINT Supprime_Event_Administrateur_FK FOREIGN KEY (login) REFERENCES Administrateur(login)
-	,CONSTRAINT Supprime_Event_Evenement0_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
-	,CONSTRAINT Supprime_Event_Contributeur1_FK FOREIGN KEY (login_Contributeur) REFERENCES Contributeur(login)
 )ENGINE=InnoDB;
 
 
@@ -126,8 +113,8 @@ CREATE TABLE S_inscrit(
 	,CONSTRAINT S_inscrit_PK PRIMARY KEY (ID_Event,login)
 
 	,CONSTRAINT S_inscrit_Evenement_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
-	,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN
-
+,CONSTRAINT S_inscrit_Visiteur0_FK FOREIGN KEY (login) REFERENCES Visiteur(login)
+)ENGINE=InnoDB;
 #------------------------------------------------------------
 # Table: Commentaire
 #------------------------------------------------------------
@@ -136,7 +123,8 @@ CREATE TABLE Commentaire(
 ID INT(11) NOT NULL AUTO_INCREMENT ,
 ID_Event INT(11) NOT NULL ,
 login VARCHAR(20) NOT NULL ,
-commentaire TEXT NOT NULL
+commentaire TEXT NOT NULL ,
+Note Int NOT NULL
 ,CONSTRAINT Commentaire_PK PRIMARY KEY (ID, ID_Event)
 
 ,CONSTRAINT Commentaire_Evenement_FK FOREIGN KEY (ID_Event) REFERENCES Evenement(ID_Event)
@@ -148,3 +136,79 @@ ALTER TABLE Visiteur AUTO_INCREMENT=1;
 ALTER TABLE Evenement AUTO_INCREMENT=1;
 ALTER TABLE Contributeur AUTO_INCREMENT=1;
 ALTER TABLE Localisation AUTO_INCREMENT=1;
+
+
+#------------------------------------------------------------
+# Trigger: SupprEvent
+#------------------------------------------------------------
+DROP PROCEDURE IF EXISTS proc_suppr_event;
+
+DELIMITER $$
+CREATE PROCEDURE proc_suppr_event(IN id integer)
+    BEGIN
+        DELETE FROM S_inscrit WHERE id=S_inscrit.ID_Event;
+        DELETE FROM Commentaire WHERE id=Commentaire.ID_Event;
+    END
+    $$
+DELIMITER ;
+
+
+#------------------------------------------------------------
+# Trigger: SupprEvent
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS suppr_event;
+
+DELIMITER $$
+CREATE TRIGGER suppr_event BEFORE DELETE ON Evenement
+FOR EACH ROW
+    BEGIN
+        CALL proc_suppr_event(OLD.ID_Event);
+    END;
+    $$
+DELIMITER ;
+
+#------------------------------------------------------------
+# Trigger: SupprTheme
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS suppr_theme;
+
+DELIMITER $$
+CREATE TRIGGER suppr_theme BEFORE DELETE ON Theme
+FOR EACH ROW
+    BEGIN
+        DELETE FROM Evenement WHERE Evenement.Nom=OLD.Nom;
+    END;
+    $$
+DELIMITER ;
+
+#------------------------------------------------------------
+# Trigger: SupprContributeur
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS suppr_contributeur;
+
+DELIMITER $$
+CREATE TRIGGER suppr_contributeur BEFORE DELETE ON Contributeur
+FOR EACH ROW
+    BEGIN
+        DELETE FROM Evenement WHERE Evenement.login=OLD.login;
+    END;
+    $$
+DELIMITER ;
+
+#------------------------------------------------------------
+# Trigger: note_event
+#------------------------------------------------------------
+DROP TRIGGER IF EXISTS note_event;
+
+DELIMITER $$
+CREATE TRIGGER  note_event AFTER INSERT ON Commentaire
+FOR EACH ROW
+    BEGIN
+        DECLARE newnote float;
+
+        SET @newnote :=(SELECT AVG(Note) FROM Commentaire WHERE ID_Event=NEW.ID_Event);
+
+        UPDATE Evenement SET Note=@newnote WHERE ID_Event=NEW.ID_Event;
+    END;
+    $$
+DELIMITER ;

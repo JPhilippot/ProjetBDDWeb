@@ -2,32 +2,42 @@
 include_once('config.php');
 
 //Connexions utilisateur
-if ($user->isLoggedin()) {
+
+//Connexions utilisateur
+if($user->isLoggedin()){
     $user->redirect('profile.php');
-} else if (isset($_POST['log'])) {
-    $login = trim($_POST['login']);
-    $pass = trim($_POST['pass']);
+}
+else if(isset($_POST['log'])){
+    $login= trim($_POST['login']);
+    $pass= trim($_POST['pass']);
 
 
-    if ($user->login($login, $pass)) {
-        if (isset($_POST['remember'])) {
-            $cookie_name = "user";
-            $cookie_value = $_SESSION['user_session'];
-            setcookie($cookie_name, $cookie_value, time() + (86400 * 30));
+    if($user->login($login,$pass)){
+        if(isset($_POST['remember'])){
+            $cookie_name="user";
+            $cookie_value=$_SESSION['user_session'];
+            setcookie($cookie_name,$cookie_value, time() + (86400 * 30));
         }
-        $user->redirect('profile.php');
-    } else {
-        $error = "Information incorrectes";
+        if($user->isAdministrateur()){
+            $user->redirect('admin.php');
+        }
+        else{
+            $user->redirect('profile.php');
+        }
     }
-} else if (isset($_POST['reg'])) {
-    $login = trim($_POST['login']);
-    $email = trim($_POST['email']);
-    $pass = trim($_POST['pass']);
+    else{
+        $error="Information incorrectes";
+    }
+} else if(isset($_POST['reg'])){
+    $login= trim($_POST['login']);
+    $email= trim($_POST['email']);
+    $pass= trim($_POST['pass']);
 
 
-    if ($user->register($email, $login, $pass)) {
+    if($user->register($email,$login,$pass)){
         $user->redirect('profile.php');
-    } else {
+    }
+    else{
         echo "ERROR<br>";
     }
 }

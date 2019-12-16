@@ -1,6 +1,6 @@
 <?php
 
-header('Content-type: text/html; charset=utf-8');
+
 include_once('config.php');
 
 //Connexions utilisateurs
@@ -51,7 +51,7 @@ $events = $stmt->fetchAll();
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
-    <title>Carte des Events !</title>
+    <title>Seek My Spot - Carte</title>
     <link rel="shortcut icon" href="img/favicon.ico">
   
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
@@ -68,10 +68,27 @@ $events = $stmt->fetchAll();
     <a href="./index.php"><img src="./img/globe.png" /></a>
 </div>
 <table style="margin:0;">
-    <th>
-
-    </th>
-    <th>
+<th>
+                <?php
+                if ($user->isLoggedin()) {
+                    echo '<div class="dropdown"><a href="./profile.php"><button class="dropbtn">Mon profil</button></a> </div>';
+                } else {
+                    echo '<div class="dropdown">
+                    <a href="./index.php"><button class="dropbtn">Accueil</button></a>
+                    </div>';
+                }
+                ?>
+            </th>
+            <?php
+            if($user->isLoggedin()){
+                echo '<th>
+                <div class="dropdown">
+                <a href="./profile.php?deco=true"><button class="dropbtn">Se déconnecter</button></a>
+                </div>
+                </th>';
+            }
+            ?>   
+             <th>
         <div class="dropdown">
             <button class="dropbtn">Evénements</button>
             <div class="dropdown-content">
@@ -80,16 +97,19 @@ $events = $stmt->fetchAll();
             </div>
         </div>
     </th>
-    <th>
-        <div id="connection" class="dropdown">
-            <button class="dropbtn" onclick=generationForm('log')>Se connecter</button>
-        </div>
-    </th>
-    <th>
-        <div id="enregister" class="dropdown">
-            <button class="dropbtn" onclick=generationForm('reg')>S'enregistrer</button>
-        </div>
-    </th>
+    <?php
+            if (!$user->isLoggedin()) {
+                echo '<th>
+                <div id="connection" class="dropdown">
+                <button class="dropbtn" onclick=generationForm("log")>Se connecter</button>
+                </div>
+                </th>
+                <th>
+                <div id="enregister" class="dropdown">
+                <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
+                </div>
+                </th>";
+            } ?>
 </table>
 </div>
 <div style="color:white;margin:1%; align-text:center">

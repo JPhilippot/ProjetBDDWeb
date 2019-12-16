@@ -1,3 +1,4 @@
+@charset "UTF8";
 * {
     margin: 0;
     padding: 0;
@@ -184,6 +185,16 @@ h1 >p{
   padding: 15px;
 }
 
+#content{
+  text-align: center;
+  background-color: white;
+  border-radius: 20px;
+
+  padding: 2%;
+  margin: 10%;
+  margin-top: 5%;
+}
+
 
 /* Pagination */
 
@@ -196,15 +207,16 @@ h1 >p{
   float: left;
   padding: 8px 16px;
   text-decoration: none;
-  transition: background-color .3s;
+  transition: background-color .3s;<
   border: 1px solid black;
 }
 
 .pagination a.active {
-  background-color: #77B3D4;
+  background-color: rgb(92, 158, 202);
   color: white;
-  border: 1px solid #77B3D4;
+  border: 1px solid rgb(92, 158, 202);
 }
+
 #globe-btn{
   margin:0;
   margin-right: 0.5%;

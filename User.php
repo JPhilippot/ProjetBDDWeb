@@ -12,6 +12,8 @@ class User{
     function __construct($dbh){
         $this->dbh=$dbh;
     }
+
+    
     
     /**
      * Permet a un utilisateur de s'enregistrer dans la bd
@@ -25,10 +27,9 @@ class User{
      * @return PDOStatment
      * @access public
      */
-    public function register($email, $login, $pass):PDOStatment{
+    public function register($email, $login, $pass){ //TODO: Faire en sorte que les admin puissent se co
         try{
             $hash=password_hash($pass,PASSWORD_DEFAULT);
-            echo strlen($hash) . "<br>";
             $stmt=$this->dbh->prepare("INSERT INTO Visiteur(email,login,password) VALUES( :uemail, :ulogin, :upass);");
 
             $stmt->bindParam(":uemail",$email);
@@ -36,8 +37,6 @@ class User{
             $stmt->bindParam(":upass",$hash);
             $stmt->execute();
             $_SESSION['user_session']=$login;
-
-            return $stmt;
         }
         catch(PDOException $e){
             echo $e->getMessage();
@@ -58,17 +57,34 @@ class User{
      */
     public function login($login,$pass): bool{
         try{
+            //Verification compte Visiteur
             $stmt=$this->dbh->prepare("SELECT * FROM Visiteur WHERE login=:ulogin OR email=:ulogin LIMIT 1");
             $stmt->execute(array(":ulogin"=>$login));
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
+            
             if($stmt->rowCount()){
                 if(password_verify($pass,$row['password'])){
                     $_SESSION['user_session']=$login;
 
                     return true;
-                } else {
-                    return false;
+                } 
+            }
+
+            //Verification compte Administrateur
+            $stmt=$this->dbh->prepare("SELECT * FROM Administrateur WHERE login=:ulogin OR email=:ulogin LIMIT 1");
+            $stmt->bindParam(":ulogin",$login);
+            $stmt->execute();
+            $row=$stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($stmt->rowCount()){
+                if(password_verify($pass,$row['password'])){
+                    $_SESSION['user_session']=$login;
+
+                    return true;
                 }
+            }
+            else{
+                return false;
             }
         }
         catch(PDOException $e){
@@ -89,8 +105,9 @@ class User{
             $stmt=$this->dbh->prepare("SELECT * FROM Contributeur WHERE login=:ulogin LIMIT 1");
             $stmt->bindParam(":ulogin",$_SESSION['user_session']);
             $stmt->execute();
+            $row=$stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt->rowCount()){
-                return true;
+                return !$row['Attente'];
             }else{
                 return false;
             }
@@ -103,6 +120,7 @@ class User{
     /**
      * Determine si l'utilisateur est un administrateur
      *
+     * @rework ne marche pas
      * @throws PDOException
      * @return bool true si l'utilisateur est administrateur false sinon
      */
@@ -111,6 +129,7 @@ class User{
             $stmt=$this->dbh->prepare("SELECT * FROM Administrateur WHERE login=:ulogin LIMIT 1");
             $stmt->bindParam(":ulogin",$_SESSION['user_session']);
             $stmt->execute();
+            $stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt->rowCount()){
                 return true;
             }else{
@@ -138,7 +157,7 @@ class User{
             $stmt->execute();
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
 
-            $stmt=$this->dbh->prepare("INSERT INTO Contributeur(login,email,password) VALUES(:ulogin,:uemail,:upass)");
+            $stmt=$this->dbh->prepare("INSERT INTO Contributeur(login,email,password,Attente) VALUES(:ulogin,:uemail,:upass,1)");
             $stmt->execute(array(":ulogin"=>$_SESSION['user_session'],":uemail"=>$row['email'],":upass"=>$row['password']));
             return true;
         }
@@ -183,7 +202,7 @@ class User{
             if($stmt->rowCount()){
                 echo "<ul>";
                 for ($i=0; $i<$stmt->rowCount();$i++){
-                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
+                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . " </li>";
                     $tab=$stmt->fetch(PDO::FETCH_ASSOC);
                 }
                 echo "</ul><br>";
@@ -212,7 +231,7 @@ class User{
             if($stmt->rowCount()){
                 echo "<ul>";
                 for ($i=0; $i<$stmt->rowCount();$i++){
-                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "</li>";
+                    echo "<li><a href='./contenu.php?lastevent=" . $tab['ID_Event'] . "'>" . $tab['Titre'] . "</a> le " . $tab['Date'] . " à " . $tab['Adresse'] . "<a href='./profile.php?delete=true&event={$tab['ID_Event']}'> <button class='btn btn-warning'>Supprimer</button></a></li>";
                     //Mettre un bouton pour le supprimer
                     $tab=$stmt->fetch(PDO::FETCH_ASSOC);
                 }
@@ -240,18 +259,22 @@ class User{
      * @return bool true si tout se passe bien
      * @access public
      */
-    public function createEvent($title, $theme, $date, $adress, $eff, $desc): bool{
+    public function createEvent($title, $theme, $date, $address, $eff, $desc,$lat,$lon): bool{
         try{
-            $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:adress");
-            $stmt->bindParam(":adress",$adress);
+            $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:address");
+            $stmt->bindParam(":address",$address);
             $stmt->execute();
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
             if(!$stmt->rowCount()){
                 //Create Local ?
-                //$stmt=$this->dbh->prepare("INSERT INTO ")
+                $stmt=$this->dbh->prepare("INSERT INTO Localisation(Adresse,Latitude,Longitude) Values(:address,:lat,:lon);");
+                $stmt->bindParam(":address",$address);
+                $stmt->bindParam(":lat",$lat);
+                $stmt->bindParam(":lon",$lon);
+                $stmt->execute();
             }
 
-            $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_Loc,Nom) VALUES(:title,:date,:eff,:desc,0,:login,:loc,:nom)");
+            $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_Loc,Nom,Note) VALUES(:title,:date,:eff,:desc,0,:login,:loc,:nom,0)");
             $stmt->bindParam(":title",$title);
             $stmt->bindParam(":date",$date);
             $stmt->bindParam(":eff",$eff);
@@ -275,7 +298,7 @@ class User{
      * @access public
      */
     public function logout(): bool{
-        session_destroy();            //->pas utiliser sur la fac
+        //session_destroy();            //->pas utiliser sur la fac
         unset($_SESSION['user_session']);
         $_SESSION=[];
         return true;
