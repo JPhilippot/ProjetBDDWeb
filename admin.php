@@ -6,38 +6,49 @@ if(!$user->isLoggedin() || !$user->isAdministrateur()){
 }
 
 if(isset($_POST['newTheme'])){ //L'administrateur crée un nouveau thème en replissant le formulaire
-    try{
-        $stmt=$dbh->prepare('INSERT INTO Theme(Nom, login_Administrateur) VALUES(:tnom,:ulogin)');
-        $stmt->bindParam(":tnom",trim($_POST['nomTheme'],"\t\n\'"));
-        $stmt->bindParam(":ulogin",$_SESSION['user_session']);
-        $stmt->execute();
-    }
-    catch(PDOException $e){
-        $error="Une erreur est survenue ! " . $e->getMessage();
-    }
+try{
+    $stmt=$dbh->prepare('INSERT INTO Theme(Nom, login_Administrateur) VALUES(:tnom,:ulogin)');
+    $stmt->bindParam(":tnom",trim($_POST['nomTheme'],"\t\n\'"));
+    $stmt->bindParam(":ulogin",$_SESSION['user_session']);
+    $stmt->execute();
+}
+catch(PDOException $e){
+    $error="Une erreur est survenue ! " . $e->getMessage();
+}
 }
 
 if(isset($_GET['supprTh'])){ //L'administrateur supprime un theme
-    try{
-        
-        $stmt=$dbh->prepare("DELETE FROM Theme WHERE Nom=:tnom");
-        $stmt->bindParam(':tnom',$_GET['supprTh']);
-        $stmt->execute();
+try{
+
+    $stmt=$dbh->prepare("DELETE FROM Theme WHERE Nom=:tnom");
+    $stmt->bindParam(':tnom',$_GET['supprTh']);
+    $stmt->execute();
     
-    }
-    catch(PDOException $e){
-        $error="Une erreur est survenue! " . $e->getMessage();
-    }
+}
+catch(PDOException $e){
+    $error="Une erreur est survenue! " . $e->getMessage();
+}
 }
 if(isset($_GET['supprContr'])){
     try {
-        
+
         $stmt=$dbh->prepare("DELETE FROM Contributeur WHERE login=:ulogin");
         $stmt->bindParam(":ulogin", $_GET['supprContr']);
         $stmt->execute();
 
     } catch (PDOException $e) {
         $error="Une erreur est survenue! " . $e->getMessage();
+    }
+}
+
+if(isset($_GET['validContr'])){
+    try{
+        $stmt=$dbh->prepare("UPDATE Contributeur SET Attente=0 WHERE login=:ulogin");
+        $stmt->bindParam(':ulogin',$_GET['validContr']);
+        $stmt->execute();
+    }
+    catch(PDOException $e){
+        echo $e->getMessage();
     }
 }
 ?>
@@ -92,7 +103,21 @@ if(isset($_GET['supprContr'])){
         <h1>Bienvenue <?php echo $_SESSION['user_session'];?></h1>
         <h2>Validation contributeurs:</h2>
         <?php
-        echo "Il n'y a pas de contributeur a valider<br />";
+        try{
+            $stmt=$dbh->prepare("SELECT * FROM Contributeur WHERE Attente=1");
+            $stmt->execute();
+            if($stmt->rowCount()){
+                echo "<ul>";
+                foreach ($stmt as $row) {
+                    echo "<li>{$row['login']} <a href='admin.php?validContr={$row['login']}'><button class='btn btn-primary'>Valider</button></a></li>";
+                }
+                echo "</ul>";
+            }else{
+                echo "Il n'y a pas de contributeur a valider<br />";
+            }
+        }catch(PDOException $e){
+            echo $e->getMessage();
+        }
         ?>
 
         <h2>Liste des contributeurs:</h2>

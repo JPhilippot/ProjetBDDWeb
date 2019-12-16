@@ -5,12 +5,14 @@ if(!$user->isLoggedin()){
 }
 
 if(isset($_GET['deco'])){       //Deconnexion de l'utilisateur par le boutton "Se deconnecter"
-$user->logout();
-$user->redirect('index.php');
+    $user->logout();
+    $user->redirect('index.php');
 }
 
 if(isset($_GET['contrib'])){    //Si l'utilisateur fait une demande pour devenir contributeur
-$user->setContributeur();
+    $message="Vous avez été mis en attente pour devenir contributeur.";
+    $user->setContributeur();
+    
 }
 if(isset($_GET['delete'])){
     try{
@@ -46,6 +48,7 @@ if(isset($_GET['delete'])){
     <script type="text/javascript" src="form.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <?php if(isset($message)){echo "<script>alert('$message')</script>";}?>
 </head>
 
 <body>
@@ -84,7 +87,8 @@ if(isset($_GET['delete'])){
                 echo "<div class='dropdown'>
                 <a href='./profile.php?contrib=true'><button class='dropbtn'>Devenir contributeur</button></a>
                 </div>";
-            }else{
+            }
+            else{
                 echo "<div class='dropdown'>
                 <a href='./creation.php'><button class='dropbtn'>Créer un événement</button></a>";
             }

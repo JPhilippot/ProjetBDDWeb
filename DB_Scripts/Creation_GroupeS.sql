@@ -43,7 +43,8 @@ CREATE TABLE Contributeur(
         login                Varchar (20) NOT NULL ,
         email                Text NOT NULL ,
         password             Varchar (80) NOT NULL ,
-        login_Administrateur Varchar (50)
+        login_Administrateur Varchar (50),
+        Attente 			 Boolean NOT NULL
 	,CONSTRAINT Contributeur_PK PRIMARY KEY (login)
 
 	,CONSTRAINT Contributeur_Administrateur_FK FOREIGN KEY (login_Administrateur) REFERENCES Administrateur(login)

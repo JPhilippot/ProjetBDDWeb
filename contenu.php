@@ -249,7 +249,7 @@ $now=strtotime(date("Y-m-d"));
             </div>
             <div id="desc">
                 <p><b>Description:</b><br> <?php echo $row['Descriptif']; ?></p>
-                <p>Effectif: <?php echo $row['EffectifActuel'] . "/" . $row['EffectifMax']?></p>
+                <p>Effectif: <?php echo $row['EffectifActuel'] . "/" . $row['EffectifMax'];?></p>
             </div>
             <div>
                 <?php

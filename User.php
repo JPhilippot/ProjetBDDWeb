@@ -103,8 +103,9 @@ class User{
             $stmt=$this->dbh->prepare("SELECT * FROM Contributeur WHERE login=:ulogin LIMIT 1");
             $stmt->bindParam(":ulogin",$_SESSION['user_session']);
             $stmt->execute();
+            $row=$stmt->fetch(PDO::FETCH_ASSOC);
             if($stmt->rowCount()){
-                return true;
+                return !$row['Attente'];
             }else{
                 return false;
             }
@@ -154,7 +155,7 @@ class User{
             $stmt->execute();
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
 
-            $stmt=$this->dbh->prepare("INSERT INTO Contributeur(login,email,password) VALUES(:ulogin,:uemail,:upass)");
+            $stmt=$this->dbh->prepare("INSERT INTO Contributeur(login,email,password,Attente) VALUES(:ulogin,:uemail,:upass,1)");
             $stmt->execute(array(":ulogin"=>$_SESSION['user_session'],":uemail"=>$row['email'],":upass"=>$row['password']));
             return true;
         }
