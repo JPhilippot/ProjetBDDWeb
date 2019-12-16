@@ -212,3 +212,16 @@ h1 >p{
   clear:none;
   float:left;
 }
+
+.bulist {
+  vertical-align: middle;
+  height: 70px;
+  padding : 5px;
+  list-style-position:inside;
+  border: 1px solid white;
+}
+
+.bulist:hover{
+  background-color:  rgb(130, 197, 233);
+
+}

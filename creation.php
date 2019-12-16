@@ -98,7 +98,16 @@ if (isset($_POST['create'])) {
 
             <input type="submit" value="Créer" name="create" />
         </form>
+
+        <div id="otherAddresses" style="display:none;  overflow-y: scroll; height: 300px;">
+            <h2>Autres addresses correspondantes :</h2>
+            <ol style="list-style-type: none;">
+
+            </ol>
+        </div>
     </div>
+
+
 
     <script>
         var coord = {
@@ -109,37 +118,71 @@ if (isset($_POST['create'])) {
         console.log(coord.lon);
         console.log(coord.lat);
 
+        var addresses = [];
+
         function getAddress() {
+            $("ol").empty();
+            // .remove();
             console.log("contenu du form: " + $('#address').serialize());
-            var address = $('#address').serialize().substr(8);
-            console.log('address : ' + address);
-            console.log('url : https://nominatim.openstreetmap.org/search/' + address + '?format=json&polygon=1&addressdetails=1')
-            $.get("https://nominatim.openstreetmap.org/search/" + address + "?format=json&polygon=1&addressdetails=1", function(data) {
+            var requiredAddress = $('#address').serialize().substr(8);
+            console.log('form Address: ' + requiredAddress);
+            console.log('url : https://nominatim.openstreetmap.org/search/' + requiredAddress + '?format=json&polygon=1&addressdetails=1')
+            $.get("https://nominatim.openstreetmap.org/search/" + requiredAddress + "?format=json&polygon=1&addressdetails=1&limit=5", function(data) {
                 // $.get("https://nominatim.openstreetmap.org/search/135%20pilkington%20avenue,%20birmingham?format=json&polygon=1&addressdetails=1", function(data) {
-                console.log(data[0])
 
-                coord.lon = data[0].lon;
-                coord.lat = data[0].lat;
-                console.log(coord);
-                console.log(coord.lon);
-                console.log(coord.lat);
-                console.log(map)
-                map.getView().setCenter(ol.proj.transform([coord.lon, coord.lat], 'EPSG:4326', 'EPSG:3857'));
-                map.getView().setZoom(16);
-                addMarker(coord.lon + coord.lat, $('#title').serialize(), "Vous", coord.lat, coord.lon, address);
 
+                console.log(data);
+                if (data[0] == null) {
+                    $("#otherAddresses").hide();
+                    if (!$('#errAddress').length) {
+                        $("#MainContainer").append("<h2 id='errAddress' style='margin-top:10px; padding:10px;'>Aucune adresse correspondante à votre saisie n'a été trouvée ! :(</h2>")
+                    }
+                } else {
+                    if ($('#errAddress').length) {
+                        $('#errAddress').remove();
+                    }
+                    coord.lon = data[0].lon;
+                    coord.lat = data[0].lat;
+                    addresses = []
+                    console.log(coord);
+                    // console.log(map)
+                    map.getView().setCenter(ol.proj.transform([coord.lon, coord.lat], 'EPSG:4326', 'EPSG:3857'));
+                    map.getView().setZoom(16);
+                    addMarker(coord.lon + coord.lat, $('#title').serialize(), "Vous", coord.lat, coord.lon, requiredAddress);
+                    $("#otherAddresses").show();
+
+                    for (let i = 0; i < data.length; i++) {
+                        addresses[i] = data[i]
+                        console.log(data[i])
+                        var $li = $("<li id='" + i + " 'class='bulist'>" + data[i].display_name + "</li>");
+                        $li.on('click', function() {
+
+                            map.getOverlays().getArray().slice(0)
+                                .forEach(function(overlay) {
+                                    map.removeOverlay(overlay);
+                                });
+                            console.log("I'm creating a marker at : [" + addresses[i].lat + ";" + addresses[i].lon + "]")
+                            addMarker(addresses[i].lon + addresses[i].lat, $('#title').serialize(), "Vous", addresses[i].lat, addresses[i].lon, requiredAddress);
+                            $('#address').val(addresses[i].display_name)
+
+                        });
+                        $("#otherAddresses > ol").append($li);
+                    }
+                }
             });
+            $("#marker" + coord.lon + coord.lat).mouseover(function() {
+                if ($("#popup" + coord.lon + coord.lat).is(":visible")) {
+                    $("#popup" + coord.lon + coord.lat).hide();
+                } else {
+                    $("#popup" + coord.lon + coord.lat).show();
+                }
+            });
+
+            $("#popup" + coord.lon + coord.lat).attr("style", "width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();
+
+
         }
 
-        $("#marker" + coord.lon + coord.lat).mouseover(function() {
-            if ($("#popup" + coord.lon + coord.lat).is(":visible")) {
-                $("#popup" + coord.lon + coord.lat).hide();
-            } else {
-                $("#popup" + coord.lon + coord.lat).show();
-            }
-        });
-
-        $("#popup" + coord.lon + coord.lat).attr("style", "width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();
 
 
         // console.log($("#MainContainer").height());
