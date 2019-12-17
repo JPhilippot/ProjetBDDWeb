@@ -159,6 +159,9 @@ $now=strtotime(date("Y-m-d"));
 
 <body>
     <div id="Menu">
+        <div class="dropdown" id="globe-btn">
+            <a href="./index.php"><img src="./img/globe.png" /></a>
+        </div>
         <table>
             <th>
                 <?php

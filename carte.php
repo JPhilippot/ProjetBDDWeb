@@ -1,4 +1,6 @@
 <?php
+
+
 include_once('config.php');
 
 //Connexions utilisateurs
@@ -39,7 +41,7 @@ if(isset($_GET['deco'])){
 $stmt = $dbh->prepare("SELECT COUNT(*) FROM Evenement;");
 $stmt->execute();
 $nbrow =  $stmt->fetch(PDO::FETCH_ASSOC);
-$stmt = $dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Evenement.ID_LOC = Localisation.ID_LOC;");
+$stmt = $dbh->prepare("SELECT * FROM Evenement, Localisation WHERE Evenement.ID_LOC =  Localisation.ID_LOC;");
 $stmt->execute();
 $events = $stmt->fetchAll();
 ?>
@@ -50,19 +52,23 @@ $events = $stmt->fetchAll();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.0/build/ol.js"></script>
     <title>Seek My Spot - Carte</title>
-
+    <link rel="shortcut icon" href="img/favicon.ico">
+  
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
     <script type="text/javascript" src="map.js"></script>
-    <link rel="shortcut icon" href="img/favicon.ico">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 
-<body>
-    <div id="Menu">
-        <table>
-            <th>
+<body style="margin: 0; height: 100%; overflow: hidden">
+<div id="Menu">
+
+<div class="dropdown" id="globe-btn">
+    <a href="./index.php"><img src="./img/globe.png" /></a>
+</div>
+<table style="margin:0;">
+<th>
                 <?php
                 if ($user->isLoggedin()) {
                     echo '<div class="dropdown"><a href="./profile.php"><button class="dropbtn">Mon profil</button></a> </div>';
@@ -81,17 +87,17 @@ $events = $stmt->fetchAll();
                 </div>
                 </th>';
             }
-            ?>
-            <th>
-                <div class="dropdown">
-                    <button class="dropbtn">Evénements</button>
-                    <div class="dropdown-content">
-                        <a href="./carte.php">Carte</a>
-                        <a href="./event.php">Liste</a>
-                    </div>
-                </div>
-            </th>
-            <?php
+            ?>   
+             <th>
+        <div class="dropdown">
+            <button class="dropbtn">Evénements</button>
+            <div class="dropdown-content">
+                <a href="./carte.php">Carte</a>
+                <a href="./event.php">Liste</a>
+            </div>
+        </div>
+    </th>
+    <?php
             if (!$user->isLoggedin()) {
                 echo '<th>
                 <div id="connection" class="dropdown">
@@ -103,25 +109,28 @@ $events = $stmt->fetchAll();
                 <button class="dropbtn" onclick=generationForm("reg")>' . "S'enregistrer</button>
                 </div>
                 </th>";
-            }
-            ?>
-        </table>
-    </div>
-    <div id="map" class="map" style="display: inline-block;
-    height:800px;
-    width: 100%;
-    backface-visibility: hidden;
-    "></div>
-    <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 50px; display: none;' />
+            } ?>
+</table>
+</div>
+<div style="color:white;margin:1%; align-text:center">
+    <h2>Voici la carte des Evénements !</h2> <p>Depuis cette carte vous pouvez visualiser tous les évènements répertoriés sur notre site au travers du monde. Vous pouvez également les visualiser sous forme de liste en cliquant <a href="./event.php">ici</a>.</p>
+</div>
+
+    <div id="map" class="map" style="display: inline-block; margin-top:2.5%;
+            height:800px;
+            width: 100%;
+            backface-visibility: hidden;
+        "></div>
+    <img id="markerProto" class="marker" src="./img/marker.png" style='width: 50px; height: 45px; display: none;' />
     <div id="popupProto" style="display:none; font-size:18pt; color:black; width:100px; height:100px"></div>
 
     <script type="text/javascript">
         var map = new ol.Map({
             target: 'map',
             layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            })
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
             ],
             loadTilesWhileAnimating: true,
             loadTilesWhileInteracting: true,
@@ -131,24 +140,24 @@ $events = $stmt->fetchAll();
             })
         });
     </script>
-</div>
+    </div>
 
-<script>
-    <?php
-    foreach ($events as $row) {
+    <script>
+        <?php
+        foreach ($events as $row) {
 
-        echo 'addMarker(' . $row["ID_Event"] . ',"' . $row["Titre"] . '","' . $row["login"] . '",' . $row["Latitude"] . ',' . $row["Longitude"] . ',"' . $row["Adresse"] . '");
-        $("#marker' . $row["ID_Event"] . '").show();
-        $("#marker' . $row["ID_Event"] . '").mouseover(function () {
-            if($("#popup' . $row["ID_Event"] . '").is(":visible")){
-               $("#popup' . $row["ID_Event"] . '").hide(); }
-               else{
-                $("#popup' . $row["ID_Event"] . '").show();
-                }});
-                
-                $("#popup' . $row["ID_Event"] . '").attr("style","width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();';
-            }
-            ?>
-        </script>
-    </body>
-    </html>
+            echo 'addMarker(' . $row["ID_Event"] . ',"' . $row["Titre"] . '","' . $row["login"] . '",' . $row["Latitude"] . ',' . $row["Longitude"] . ',"' . $row["Adresse"] . '");
+           $("#marker' . $row["ID_Event"] . '").show();
+                $("#marker' . $row["ID_Event"] . '").mouseover(function () {
+                    if($("#popup' . $row["ID_Event"] . '").is(":visible")){
+                     $("#popup' . $row["ID_Event"] . '").hide(); }
+                    else{
+                        $("#popup' . $row["ID_Event"] . '").show();
+                        }});
+            
+             $("#popup' . $row["ID_Event"] . '").attr("style","width:50%;height:100%;background-color:white;border-radius: 10px;padding:5px;").hide();';
+        }
+        ?>
+    </script>
+</body>
+</html>

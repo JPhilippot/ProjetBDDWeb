@@ -1,6 +1,5 @@
 <?php
 include_once('config.php');
-
 if(!$user->isLoggedin() || !$user->isAdministrateur()){
     $user->redirect('index.php');
 }
@@ -63,8 +62,9 @@ if(isset($_GET['validContr'])){
     <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="form.js"></script>
     <link rel="shortcut icon" href="img/favicon.ico">
+
     <?php
-    if(isset($error)){
+    if (isset($error)) {
         echo "<script>alert($error);</script>";
     }
     ?>
@@ -73,7 +73,11 @@ if(isset($_GET['validContr'])){
 <body>
 
     <div id="Menu">
-        <table>
+
+        <div class="dropdown" id="globe-btn">
+            <a href="./index.php"><img src="./img/globe.png" /></a>
+        </div>
+        <table style="margin:0;">
             <th>
                 <div class="dropdown">
                     <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
@@ -96,14 +100,10 @@ if(isset($_GET['validContr'])){
             </th>
         </table>
     </div>
-    <div id ="up">
-        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
-    </div>
-    <div id="content">
-        <h1>Bienvenue <?php echo $_SESSION['user_session'];?></h1>
+    <div id="MainContainer">
+        <h1>Bienvenue <?php echo $_SESSION['user_session']; ?></h1>
         <h2>Validation contributeurs:</h2>
-        <?php
-        try{
+        <?php try{
             $stmt=$dbh->prepare("SELECT * FROM Contributeur WHERE Attente=1");
             $stmt->execute();
             if($stmt->rowCount()){
@@ -133,26 +133,26 @@ if(isset($_GET['validContr'])){
         }
         catch(PDOException $e){
             echo $e->getMessage();
-        }
-        ?>
+        } ?>
         <h2>Création de thème:</h2>
         <p>Voici les thèmes déjà existants:
             <?php
-            $stmt=$dbh->prepare("SELECT Nom FROM Theme");
-            $stmt->execute();
-            echo "<br>";
+            $stmt = $dbh->prepare("SELECT Nom FROM Theme");
+            $stmt->execute(); echo "<br>";
             foreach($stmt as $row){
                 echo $row['Nom'] . " <a href='admin.php?supprTh={$row['Nom']}'><button class='btn btn-warning'>Supprimer</button></a> <br>";
-            }
+            }            
             ?>
         </p>
+        <div>
         <p>
-            Seul les caractères alphanumériques sont autorisés.
+            Seul les caractères alphanumériques sont autorisés.</p>
             <form class='form-inline' style="margin-left: 40%; " method="POST">
                 <input class='form-control' type="text" name="nomTheme" pattern="[a-zA-Z0-9\s]+"/><br />
                 <input class='form-control' type="submit" name="newTheme" value="Créer thème" />
             </form>
-            <p>
             </div>
-        </body>
-        </html>
+    </div>
+</body>
+
+</html>

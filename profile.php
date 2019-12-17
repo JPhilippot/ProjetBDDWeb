@@ -54,6 +54,9 @@ if(isset($_GET['delete'])){
 <body>
 
     <div id="Menu">
+        <div class="dropdown" id="globe-btn">
+            <a href="./index.php"><img src="./img/globe.png" /></a>
+        </div>
         <table>
             <th>
                 <div class="dropdown">
@@ -76,9 +79,6 @@ if(isset($_GET['delete'])){
                 </div>
             </th>
         </table>
-    </div>
-    <div id ="up">
-        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
     </div>
     <div id="container">
         <div id="content">

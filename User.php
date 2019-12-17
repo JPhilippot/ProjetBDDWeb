@@ -12,6 +12,8 @@ class User{
     function __construct($dbh){
         $this->dbh=$dbh;
     }
+
+    
     
     /**
      * Permet a un utilisateur de s'enregistrer dans la bd
@@ -257,26 +259,39 @@ class User{
      * @return bool true si tout se passe bien
      * @access public
      */
-    public function createEvent($title, $theme, $date, $adress, $eff, $desc): bool{
+    public function createEvent($title, $theme, $date, $address, $eff, $desc,$lat,$lon): bool{
         try{
-            $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:adress");
-            $stmt->bindParam(":adress",$adress);
+            $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:address");
+            $stmt->bindParam(":address",$address);
             $stmt->execute();
             $row=$stmt->fetch(PDO::FETCH_ASSOC);
             if(!$stmt->rowCount()){
                 //Create Local ?
-                //$stmt=$this->dbh->prepare("INSERT INTO ")
+                $stmt=$this->dbh->prepare("INSERT INTO Localisation(Adresse,Latitude,Longitude) Values(:address,:lat,:lon);");
+                $stmt->bindParam(":address",$address);
+                $stmt->bindParam(":lat",$lat);
+                $stmt->bindParam(":lon",$lon);
+                $stmt->execute();
+                
+                $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:adress");
+                $stmt->bindParam(":adress",$address);
+                $stmt->execute();
+                $id=$stmt->fetch(PDO::FETCH_ASSOC);
+            }
+            if(isset($id)){
+                $row['ID_Loc']=$id;
             }
 
-            $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_Loc,Nom) VALUES(:title,:date,:eff,:desc,0,:login,:loc,:nom)");
+            $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_Loc,Nom,Note) VALUES(:title,:date,:eff,:desc,0,:login,:loc,:nom,0)");
             $stmt->bindParam(":title",$title);
             $stmt->bindParam(":date",$date);
             $stmt->bindParam(":eff",$eff);
             $stmt->bindParam(":desc",$desc);
             $stmt->bindParam(":login",$_SESSION['user_session']);
-            $stmt->bindParam(":loc",$row['ID_Loc']);
+            $stmt->bindParam(":loc",$row['ID_Loc'],PDO::PARAM_INT);
             $stmt->bindParam(":nom",$theme);
             $stmt->execute();
+            
             return true;
         }
         catch(PDOException $e){
