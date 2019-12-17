@@ -144,7 +144,7 @@ $now=strtotime(date("Y-m-d"));
             margin-left: 5%;
             margin-right: 25%;
             height: 500px;
-            width: 900px;
+            width: 90%;
             backface-visibility: hidden;
         }
     </style>
@@ -164,7 +164,7 @@ $now=strtotime(date("Y-m-d"));
                 <?php
                 if($user->isLoggedin()){
                     echo '<div class="dropdown">
-                    <a href="./profile.php"><button class="dropbtn">Mon profil</button></a>
+                    <a href="./index.php"><button class="dropbtn">Mon profil</button></a>
                     </div>';
                 } else {
                     echo '<div class="dropdown">
@@ -207,10 +207,7 @@ $now=strtotime(date("Y-m-d"));
             ?>
         </table>
     </div>
-    <div id ="up">
-        <a href="#Menu"><img id="arrow" src="img/up.png"/></a>
-    </div>
-
+   
     <div id="container">
         <div id="content">
             <h1>
@@ -293,9 +290,9 @@ $now=strtotime(date("Y-m-d"));
                         $stmt->execute();
  
                         foreach($stmt as $row){
-                            echo"<p><h4><b>{$row['login']}</b>  {$row['Note']}/5</h4>";
+                            echo"<div style=' border: 1px solid black;'><p><h4><b>{$row['login']}</b>  {$row['Note']}/5</h4>";
                             echo $row['commentaire'];
-                            echo "</p>";
+                            echo "</p></div>";
                         }
                     }
                     catch(PDOException $e){

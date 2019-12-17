@@ -98,7 +98,7 @@ else if(isset($_POST['log'])){
 
         <div class="pacc">
             <p>
-                <h1><b>Bienvenue sur Seek My Spot !JE DOIS CHANGER LA COULEUR DES IMAGES VIA PHOTOSHOP POUR LES BOUTTONS</b>
+                <h1><b>Bienvenue sur Seek My Spot !</b>
                 </h1>
                 <b>[Description du site]</b>
                 {

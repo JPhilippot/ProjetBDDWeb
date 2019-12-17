@@ -73,9 +73,6 @@ if (isset($_GET['search'])) {
 
     <div id="Menu">
     <table>
-        <div class="dropdown" id="globe-btn">
-            <a href="./index.php"><img src="./img/globe.png" /></a>
-        </div>
         <table style="margin:0;">
             <th>
                 <?php

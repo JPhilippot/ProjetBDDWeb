@@ -272,6 +272,11 @@ class User{
                 $stmt->bindParam(":lat",$lat);
                 $stmt->bindParam(":lon",$lon);
                 $stmt->execute();
+                
+                $stmt=$this->dbh->prepare("SELECT ID_Loc FROM Localisation WHERE Adresse=:adress");
+                $stmt->bindParam(":adress",$address);
+                $stmt->execute();
+                $id=$stmt->fetch(PDO::FETCH_ASSOC);
             }
 
             $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_Loc,Nom,Note) VALUES(:title,:date,:eff,:desc,0,:login,:loc,:nom,0)");
@@ -280,9 +285,14 @@ class User{
             $stmt->bindParam(":eff",$eff);
             $stmt->bindParam(":desc",$desc);
             $stmt->bindParam(":login",$_SESSION['user_session']);
-            $stmt->bindParam(":loc",$row['ID_Loc']);
+            if(isset($id)){
+                $stmt->bindParam(":loc",$id['ID_Loc']);
+            }else{
+               $stmt->bindParam(":loc",$row['ID_Loc']);
+            }
             $stmt->bindParam(":nom",$theme);
             $stmt->execute();
+            
             return true;
         }
         catch(PDOException $e){
