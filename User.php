@@ -278,9 +278,6 @@ class User{
                 $stmt->execute();
                 $id=$stmt->fetch(PDO::FETCH_ASSOC);
             }
-            if(isset($id)){
-                $row['ID_Loc']=$id;
-            }
 
             $stmt=$this->dbh->prepare("INSERT INTO Evenement(Titre,Date,EffectifMax,Descriptif,EffectifActuel,login,ID_Loc,Nom,Note) VALUES(:title,:date,:eff,:desc,0,:login,:loc,:nom,0)");
             $stmt->bindParam(":title",$title);
@@ -288,7 +285,11 @@ class User{
             $stmt->bindParam(":eff",$eff);
             $stmt->bindParam(":desc",$desc);
             $stmt->bindParam(":login",$_SESSION['user_session']);
-            $stmt->bindParam(":loc",$row['ID_Loc'],PDO::PARAM_INT);
+            if(isset($id)){
+                $stmt->bindParam(":loc",$id['ID_Loc']);
+            }else{
+               $stmt->bindParam(":loc",$row['ID_Loc']);
+            }
             $stmt->bindParam(":nom",$theme);
             $stmt->execute();
             

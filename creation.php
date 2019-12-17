@@ -12,7 +12,7 @@ if (isset($_GET['deco'])) {
 
 if (isset($_POST['create'])) {
     $user->createEvent($_POST['title'], $_POST['theme'], $_POST['date'], $_POST['address'], $_POST['effect'], $_POST['desc'], $_POST['lat'], $_POST['lon']);
-    $user->redirect("profile.php");
+    //$user->redirect("profile.php");
 }
 ?>
 <!DOCTYPE html>

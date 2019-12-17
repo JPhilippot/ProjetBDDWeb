@@ -23,6 +23,7 @@ function addMarker(id,title, login, lat, long, address) {
         position: ol.proj.fromLonLat([long, lat]),
         element: popup
     })); console.log('popped')
+    console.log("long"+long+" lat"+lat);
 
 
 }
