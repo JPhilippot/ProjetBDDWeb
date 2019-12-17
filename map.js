@@ -1,7 +1,7 @@
 
 function addMarker(id,title, login, lat, long, address) {
     let image = $("#markerProto").clone();
-    image.attr("id", "marker" + id).attr('style','display:block').attr('height','50px').attr('width','50px');
+    image.attr("id", "marker" + id).attr('style','display:block').attr('height','50px').attr('width','40px');
     $("body").append(image);
 
     let popupC = $("#popupProto").clone();
@@ -16,6 +16,7 @@ function addMarker(id,title, login, lat, long, address) {
         positioning:'bottom-right',
         element: marker
     })); console.log('marked')
+    
     var popup = document.getElementById('popup' + id);
     map.addOverlay(new ol.Overlay({
         offset: [10, -50],
@@ -25,6 +26,3 @@ function addMarker(id,title, login, lat, long, address) {
 
 
 }
-
-
-

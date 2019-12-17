@@ -8,19 +8,22 @@ function filter(){
         }
     }
     else{           //Génération du form
-        form="<form id='filterForm' method=get>";
-        form+="<select name='order'>";
+        form="<form id=filterForm class='form-inline' method=get>"
+        form+="<div class='form-group'>";
+        form+="<select class='form-control' name='order'>";
         form+="<option value='Titre'>Titre</option>";
         form+="<option value='Adresse'>Adresse</option>";
         form+="<option value='Date'>Date</option>";
         form+="<option value='Nom'>Thème</option>";
         form+="<option value='EffectifActuel'>Effectif</option>";
         form+="</select>";
-        form+="<select name='crois'>";
+        form+="<select class='form-control' name='crois'>";
         form+="<option value='DESC'>Décroissant</option>";
         form+="<option value='ASC'>Croissant</option>";
         form+="</select>";
-        form+="<input type=submit value='Filtrer' name='filt'>";
+        form+="<input class='btn btn-primary' type=submit value='Filtrer' name='filt'>";
+        form+="</div>";
+        form+="</form>"
         $(form).insertAfter("#filterButton");
     }
 }
